@@ -20,6 +20,7 @@ export default defineConfig({
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/matthewvilaysack/glide' }],
 			editLink: { baseUrl: 'https://github.com/matthewvilaysack/glide/edit/main/www/' },
 			customCss: ['./src/styles/custom.css'],
+			components: { SiteTitle: './src/components/SiteTitle.astro' },
 			sidebar: [
 				{ label: 'Intro', slug: 'index' },
 				{ label: 'Install', slug: 'how-to/install' },
