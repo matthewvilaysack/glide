@@ -1,0 +1,34 @@
+/* Glide's palette on Starlight: paper ground, ink text, saffron as the one accent. */
+:root {
+	--sl-color-accent-low: #fbf0dc;
+	--sl-color-accent: #d9772f;
+	--sl-color-accent-high: #8a4a1c;
+	--sl-color-white: #17191f;
+	--sl-color-gray-1: #2b2e36;
+	--sl-color-gray-2: #4b4f5a;
+	--sl-color-gray-3: #6b7080;
+	--sl-color-gray-4: #a7abb6;
+	--sl-color-gray-5: #d6d8de;
+	--sl-color-gray-6: #eceef1;
+	--sl-color-gray-7: #f7f8fa;
+	--sl-color-black: #ffffff;
+	--sl-font: Inter, system-ui, sans-serif;
+	--sl-font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+:root[data-theme='dark'] {
+	--sl-color-accent-low: #3a2413;
+	--sl-color-accent: #e08a47;
+	--sl-color-accent-high: #f3c9a3;
+	--sl-color-white: #f2f3f5;
+	--sl-color-gray-1: #e4e6ea;
+	--sl-color-gray-2: #c9cdd6;
+	--sl-color-gray-3: #9096a3;
+	--sl-color-gray-4: #5e6571;
+	--sl-color-gray-5: #2a2e36;
+	--sl-color-gray-6: #191c22;
+	--sl-color-gray-7: #111318;
+	--sl-color-black: #0e0f12;
+}
+.site-title { font-family: "Shippori Mincho", Georgia, serif; font-weight: 500; font-size: 1.35rem; }
+.sl-markdown-content h1, .sl-markdown-content h2 { font-family: "Shippori Mincho", Georgia, serif; font-weight: 500; letter-spacing: -0.01em; }
+.sl-markdown-content code:not(pre code) { background: var(--sl-color-gray-6); border-radius: 4px; padding: 0.1em 0.35em; }

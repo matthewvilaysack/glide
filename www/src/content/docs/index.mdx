@@ -1,0 +1,34 @@
+---
+title: Intro
+description: Keep your priorities in view while you work in the terminal.
+---
+
+Glide is one binary that sits under whatever terminal you already use and keeps today's plan where you type.
+Your priorities live in a Markdown note you own, in a folder you already sync.
+The agent you run in the terminal gets the same verbs you do, so the status writes itself while the work happens.
+
+```
+▶ ship portal tests · focus 1/3 · 4 open · 2 logged
+```
+
+That line is `glide focus`. It goes in your tmux status bar or your prompt, and it changes as you and your agent work.
+
+## What it does
+
+- **Focus.** The one thing you are on, tagged in your own note and printed where you type.
+- **Record.** What actually happened, timestamped, written by the agent that did the work.
+- **Capture.** Ideas and questions, one line into Notes without leaving the shell.
+- **Agents.** Claude Code, Warp, or any MCP client gets the same six verbs, with standing instructions to read your focus at the start of a session and log at the end.
+
+## What it never does
+
+Glide reads and edits four sections of today's note: Focus, Tasks, Record, Notes.
+Everything else in the file survives byte for byte.
+No daemon, no account, no server, no lock file.
+Nothing leaves your machine.
+
+## Start here
+
+1. [Install](/docs/install/) it with Homebrew or one line of curl.
+2. Follow the [quick start](/docs/quick-start/): point it at your notes, wire in your agent, put the line on screen.
+3. Read [the daily note contract](/docs/usage/vault/) once, so you know exactly what it touches.
