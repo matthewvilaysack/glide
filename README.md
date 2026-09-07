@@ -81,7 +81,7 @@ The contract is one page: [`docs/vault-contract.md`](docs/vault-contract.md).
 The same notes compound.
 A person who has kept their own priorities and record for a month has, without trying, written most of what the next hire on their team needs on day one: who owns what, what got stuck and how it got unstuck, which commands finally worked.
 The team tier turns that record into onboarding, and the on-device knowledge graph the binary already carries (ownership, permissions, friction) is where it lands.
-The product requirements are in [`docs/requirements.md`](docs/requirements.md).
+The product requirements are in [`docs/requirements.md`](docs/requirements.md). The pitch, as it stands, is at [tryglide.net/pitch.html](https://tryglide.net/pitch.html), and how a release happens is at [tryglide.net/how-it-ships.html](https://tryglide.net/how-it-ships.html).
 
 ## Building and releasing
 
