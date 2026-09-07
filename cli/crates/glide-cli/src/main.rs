@@ -43,6 +43,19 @@ fn dispatch(cli: Cli) -> anyhow::Result<()> {
         Some(Command::Models) => commands::models::run(&cli.globals),
         Some(Command::Tools(args)) => commands::tools::run(&cli.globals, args),
         Some(Command::Focus(args)) => commands::focus::run(&cli.globals, args),
+        Some(Command::Show) => commands::focus::show_list(&cli.globals),
+        Some(Command::Today) => commands::focus::run(
+            &cli.globals,
+            cli::FocusCmd {
+                sub: Some(cli::FocusSub::Today),
+            },
+        ),
+        Some(Command::Build(args)) => commands::index::run(
+            &cli.globals,
+            cli::IndexCmd {
+                sub: cli::IndexSub::Build(args),
+            },
+        ),
         Some(Command::Mcp(args)) => commands::mcp::run(&cli.globals, args),
         Some(Command::Prime(args)) => commands::prime::run(&cli.globals, args),
         Some(Command::Setup(args)) => commands::setup::run(&cli.globals, args),

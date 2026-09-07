@@ -23,6 +23,8 @@ glide [OPTIONS] [COMMAND]
 
 | Command | What it does |
 | --- | --- |
+| `glide show` (alias `status`) | The strip and the Focus list with the current one marked |
+| `glide today` | Print today's note |
 | `glide focus` | The one-line strip (`--json` for the snapshot) |
 | `glide focus set <text>` | Make this the current focus |
 | `glide focus done <text>` | Check off a Focus or Tasks bullet |
@@ -56,7 +58,7 @@ glide [OPTIONS] [COMMAND]
 | Command | What it does |
 | --- | --- |
 | `glide init [--force]` | Bootstrap `.glide/` |
-| `glide index build [--full]` / `show` | Build or inspect the graph |
+| `glide build` / `glide index build [--full]` / `show` | Build or inspect the graph |
 | `glide who-owns <path> [--top N] [--why]` | Ownership with evidence |
 | `glide plan <person> [--role]` | Day-one plan |
 | `glide request <permission> [--for]` | Access request |

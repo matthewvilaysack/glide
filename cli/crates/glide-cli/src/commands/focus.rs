@@ -51,6 +51,33 @@ pub fn run(globals: &GlobalArgs, cmd: FocusCmd) -> Result<()> {
     Ok(())
 }
 
+/// `glide show`: the strip, then the Focus list with the current one marked.
+pub fn show_list(globals: &GlobalArgs) -> Result<()> {
+    let vault = open_vault()?;
+    let note = vault.load(Vault::today())?;
+    let snap = note.snapshot();
+    if wants_json(globals) {
+        return print_json(&snap);
+    }
+    let color = use_color(globals);
+    println!("{}", snap.line());
+    for item in &snap.focus {
+        let mark = if item.done { "[x]" } else { "[ ]" };
+        let now = if item.now { "  ← now" } else { "" };
+        println!("  {mark} {}{}", item.text, dim(now, color));
+    }
+    if snap.focus.is_empty() {
+        println!(
+            "{}",
+            dim(
+                "  (nothing in the focus list yet; `glide focus set <text>` adds one)",
+                color
+            )
+        );
+    }
+    Ok(())
+}
+
 fn write_guard(globals: &GlobalArgs) -> Result<()> {
     if globals.safe {
         anyhow::bail!("--safe: refusing to write to the vault");

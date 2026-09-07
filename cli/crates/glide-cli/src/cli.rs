@@ -86,6 +86,16 @@ pub enum Command {
     /// Keep today's priorities in view: show, set, finish, capture, log.
     Focus(FocusCmd),
 
+    /// Today's focus strip and the Focus list (same as `glide focus show`).
+    #[command(visible_alias = "status")]
+    Show,
+
+    /// Print today's note (same as `glide focus today`).
+    Today,
+
+    /// Build the on-device graph (same as `glide index build`).
+    Build(IndexBuildArgs),
+
     /// Serve glide's tools to a terminal agent over the Model Context Protocol.
     Mcp(McpCmd),
 

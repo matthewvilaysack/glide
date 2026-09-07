@@ -36,6 +36,7 @@ cargo build --release
 | `glide request <permission> [--for <person>]` | Draft an access request |
 | `glide friction log <event> [--severity 1-5]` | Log a friction event |
 | `glide friction digest [--since <duration>]` | Roll friction into a weekly digest |
+| `glide show` / `glide today` | The strip with the Focus list / today's note |
 | `glide focus [set\|done\|capture\|log\|today]` | Keep today's priorities in view; edits the daily note in your vault |
 | `glide mcp serve` | Serve the focus verbs to a terminal agent over MCP (stdio) |
 | `glide prime [--hook-json]` | Session-start context for an agent: today's focus and the six verbs |
