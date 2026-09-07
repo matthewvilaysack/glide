@@ -83,7 +83,7 @@ pub enum Command {
     /// Manage external tools (e.g. repomix).
     Tools(ToolsCmd),
 
-    /// Keep today's priorities in view: show, set, finish, capture, log.
+    /// Keep today's priorities in view: show, set, done, capture, log.
     Focus(FocusCmd),
 
     /// Today's focus strip and the Focus list (same as `glide focus show`).
