@@ -1,0 +1,15 @@
+[package]
+name = "glide-tui"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+glide-common = { workspace = true }
+glide-graph = { workspace = true }
+glide-core = { workspace = true }
+glide-vault = { workspace = true }
+anyhow = { workspace = true }
+ratatui = { workspace = true }

@@ -1,0 +1,591 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://github.com/matthewvilaysack/skills-documentation/tree/main/sketch",
+  "elements": [
+    {
+      "id": "Intern-top",
+      "type": "rectangle",
+      "x": 0,
+      "y": 0,
+      "width": 150,
+      "height": 65,
+      "label": {
+        "text": "Intern",
+        "fontSize": 16,
+        "verticalAlign": "middle",
+        "strokeColor": "#000",
+        "groupIds": []
+      },
+      "fillStyle": "solid"
+    },
+    {
+      "id": "Intern-bottom",
+      "type": "rectangle",
+      "x": 0,
+      "y": 578,
+      "width": 150,
+      "height": 65,
+      "label": {
+        "text": "Intern",
+        "fontSize": 16,
+        "verticalAlign": "middle",
+        "strokeColor": "#000",
+        "groupIds": []
+      },
+      "fillStyle": "solid"
+    },
+    {
+      "id": "Chat-top",
+      "type": "rectangle",
+      "x": 323,
+      "y": 0,
+      "width": 150,
+      "height": 65,
+      "label": {
+        "text": "ChatAdapter",
+        "fontSize": 16,
+        "verticalAlign": "middle",
+        "strokeColor": "#000",
+        "groupIds": []
+      },
+      "fillStyle": "solid"
+    },
+    {
+      "id": "Chat-bottom",
+      "type": "rectangle",
+      "x": 323,
+      "y": 578,
+      "width": 150,
+      "height": 65,
+      "label": {
+        "text": "ChatAdapter",
+        "fontSize": 16,
+        "verticalAlign": "middle",
+        "strokeColor": "#000",
+        "groupIds": []
+      },
+      "fillStyle": "solid"
+    },
+    {
+      "id": "Agent-top",
+      "type": "rectangle",
+      "x": 576,
+      "y": 0,
+      "width": 150,
+      "height": 65,
+      "label": {
+        "text": "Agent runtime",
+        "fontSize": 16,
+        "verticalAlign": "middle",
+        "strokeColor": "#000",
+        "groupIds": []
+      },
+      "fillStyle": "solid"
+    },
+    {
+      "id": "Agent-bottom",
+      "type": "rectangle",
+      "x": 576,
+      "y": 578,
+      "width": 150,
+      "height": 65,
+      "label": {
+        "text": "Agent runtime",
+        "fontSize": 16,
+        "verticalAlign": "middle",
+        "strokeColor": "#000",
+        "groupIds": []
+      },
+      "fillStyle": "solid"
+    },
+    {
+      "id": "Mem-top",
+      "type": "rectangle",
+      "x": 842,
+      "y": 0,
+      "width": 150,
+      "height": 65,
+      "label": {
+        "text": "MemoryStore",
+        "fontSize": 16,
+        "verticalAlign": "middle",
+        "strokeColor": "#000",
+        "groupIds": []
+      },
+      "fillStyle": "solid"
+    },
+    {
+      "id": "Mem-bottom",
+      "type": "rectangle",
+      "x": 842,
+      "y": 578,
+      "width": 150,
+      "height": 65,
+      "label": {
+        "text": "MemoryStore",
+        "fontSize": 16,
+        "verticalAlign": "middle",
+        "strokeColor": "#000",
+        "groupIds": []
+      },
+      "fillStyle": "solid"
+    },
+    {
+      "id": "Mgr-top",
+      "type": "rectangle",
+      "x": 1042,
+      "y": 0,
+      "width": 150,
+      "height": 65,
+      "label": {
+        "text": "Manager view",
+        "fontSize": 16,
+        "verticalAlign": "middle",
+        "strokeColor": "#000",
+        "groupIds": []
+      },
+      "fillStyle": "solid"
+    },
+    {
+      "id": "Mgr-bottom",
+      "type": "rectangle",
+      "x": 1042,
+      "y": 578,
+      "width": 150,
+      "height": 65,
+      "label": {
+        "text": "Manager view",
+        "fontSize": 16,
+        "verticalAlign": "middle",
+        "strokeColor": "#000",
+        "groupIds": []
+      },
+      "fillStyle": "solid"
+    },
+    {
+      "id": "Mngr-top",
+      "type": "rectangle",
+      "x": 1457,
+      "y": 0,
+      "width": 150,
+      "height": 65,
+      "label": {
+        "text": "Manager",
+        "fontSize": 16,
+        "verticalAlign": "middle",
+        "strokeColor": "#000",
+        "groupIds": []
+      },
+      "fillStyle": "solid"
+    },
+    {
+      "id": "Mngr-bottom",
+      "type": "rectangle",
+      "x": 1457,
+      "y": 578,
+      "width": 150,
+      "height": 65,
+      "label": {
+        "text": "Manager",
+        "fontSize": 16,
+        "verticalAlign": "middle",
+        "strokeColor": "#000",
+        "groupIds": []
+      },
+      "fillStyle": "solid"
+    },
+    {
+      "type": "rectangle",
+      "x": 892,
+      "y": 427,
+      "width": 250,
+      "height": 39,
+      "label": {
+        "text": "separately, on a schedule",
+        "fontSize": 16,
+        "verticalAlign": "middle",
+        "strokeColor": "#000",
+        "groupIds": []
+      },
+      "strokeStyle": "dashed",
+      "fillStyle": "solid"
+    },
+    {
+      "type": "line",
+      "x": 75,
+      "y": 65,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          513
+        ]
+      ],
+      "width": 0,
+      "height": 513,
+      "strokeStyle": "solid",
+      "strokeColor": "#999",
+      "strokeWidth": 1
+    },
+    {
+      "type": "line",
+      "x": 398,
+      "y": 65,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          513
+        ]
+      ],
+      "width": 0,
+      "height": 513,
+      "strokeStyle": "solid",
+      "strokeColor": "#999",
+      "strokeWidth": 1
+    },
+    {
+      "type": "line",
+      "x": 651,
+      "y": 65,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          513
+        ]
+      ],
+      "width": 0,
+      "height": 513,
+      "strokeStyle": "solid",
+      "strokeColor": "#999",
+      "strokeWidth": 1
+    },
+    {
+      "type": "line",
+      "x": 917,
+      "y": 65,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          513
+        ]
+      ],
+      "width": 0,
+      "height": 513,
+      "strokeStyle": "solid",
+      "strokeColor": "#999",
+      "strokeWidth": 1
+    },
+    {
+      "type": "line",
+      "x": 1117,
+      "y": 65,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          513
+        ]
+      ],
+      "width": 0,
+      "height": 513,
+      "strokeStyle": "solid",
+      "strokeColor": "#999",
+      "strokeWidth": 1
+    },
+    {
+      "type": "line",
+      "x": 1532,
+      "y": 65,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          513
+        ]
+      ],
+      "width": 0,
+      "height": 513,
+      "strokeStyle": "solid",
+      "strokeColor": "#999",
+      "strokeWidth": 1
+    },
+    {
+      "type": "arrow",
+      "x": 76,
+      "y": 101,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          318,
+          0
+        ]
+      ],
+      "width": 318,
+      "height": 0,
+      "strokeStyle": "solid",
+      "endArrowhead": "arrow",
+      "startArrowhead": null,
+      "label": {
+        "text": "\"how do I get prod read access?\"",
+        "fontSize": 16
+      },
+      "roundness": {
+        "type": 2
+      }
+    },
+    {
+      "type": "arrow",
+      "x": 399,
+      "y": 147,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          248,
+          0
+        ]
+      ],
+      "width": 248,
+      "height": 0,
+      "strokeStyle": "solid",
+      "endArrowhead": "arrow",
+      "startArrowhead": null,
+      "label": {
+        "text": "forward(message, user_id)",
+        "fontSize": 16
+      },
+      "roundness": {
+        "type": 2
+      }
+    },
+    {
+      "type": "arrow",
+      "x": 652,
+      "y": 193,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          261,
+          0
+        ]
+      ],
+      "width": 261,
+      "height": 0,
+      "strokeStyle": "solid",
+      "endArrowhead": "arrow",
+      "startArrowhead": null,
+      "label": {
+        "text": "read profile (intern, repo facts)",
+        "fontSize": 16
+      },
+      "roundness": {
+        "type": 2
+      }
+    },
+    {
+      "type": "arrow",
+      "x": 652,
+      "y": 239,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          60,
+          -10
+        ],
+        [
+          60,
+          30
+        ],
+        [
+          0,
+          20
+        ]
+      ],
+      "width": -652,
+      "height": -229,
+      "strokeStyle": "solid",
+      "endArrowhead": "arrow",
+      "startArrowhead": null,
+      "label": {
+        "text": "reason + call SkillEngine",
+        "fontSize": 16
+      },
+      "roundness": {
+        "type": 2
+      }
+    },
+    {
+      "type": "arrow",
+      "x": 652,
+      "y": 315,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          261,
+          0
+        ]
+      ],
+      "width": 261,
+      "height": 0,
+      "strokeStyle": "solid",
+      "endArrowhead": "arrow",
+      "startArrowhead": null,
+      "label": {
+        "text": "write profile delta (curated)",
+        "fontSize": 16
+      },
+      "roundness": {
+        "type": 2
+      }
+    },
+    {
+      "type": "arrow",
+      "x": 650,
+      "y": 361,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -248,
+          0
+        ]
+      ],
+      "width": -248,
+      "height": 0,
+      "strokeStyle": "solid",
+      "endArrowhead": "arrow",
+      "startArrowhead": null,
+      "label": {
+        "text": "reply with steps + ticket link",
+        "fontSize": 16
+      },
+      "roundness": {
+        "type": 2
+      }
+    },
+    {
+      "type": "arrow",
+      "x": 397,
+      "y": 407,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -318,
+          0
+        ]
+      ],
+      "width": -318,
+      "height": 0,
+      "strokeStyle": "solid",
+      "endArrowhead": "arrow",
+      "startArrowhead": null,
+      "label": {
+        "text": "\"filed PERM-482, ETA two hours, ping",
+        "fontSize": 16
+      },
+      "roundness": {
+        "type": 2
+      }
+    },
+    {
+      "type": "arrow",
+      "x": 1116,
+      "y": 502,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -195,
+          0
+        ]
+      ],
+      "width": -195,
+      "height": 0,
+      "strokeStyle": "solid",
+      "endArrowhead": "arrow",
+      "startArrowhead": null,
+      "label": {
+        "text": "read tenant events",
+        "fontSize": 16
+      },
+      "roundness": {
+        "type": 2
+      }
+    },
+    {
+      "type": "arrow",
+      "x": 1118,
+      "y": 548,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          410,
+          0
+        ]
+      ],
+      "width": 410,
+      "height": 0,
+      "strokeStyle": "solid",
+      "endArrowhead": "arrow",
+      "startArrowhead": null,
+      "label": {
+        "text": "\"Sarah has been stuck on prod read access for 3 days\"",
+        "fontSize": 16
+      },
+      "roundness": {
+        "type": 2
+      }
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": null
+  },
+  "files": {}
+}

@@ -1,0 +1,63 @@
+name: Patch release
+
+# The patch lane. A fix lands on main first, then gets cherry-picked onto a
+# lazy release branch (release/0.1, cut from v0.1.0 only when a patch is
+# needed). Every merge to that branch bumps PATCH of that line, tags it, and
+# publishes through the same Release workflow main uses. A patch never carries
+# features; scripts/patch.sh keeps the cherry-pick honest.
+
+on:
+  push:
+    branches: ["release/**"]
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    name: bump PATCH on ${{ github.ref_name }}
+    runs-on: ubuntu-24.04
+    # A "Release vX.Y.Z" commit is the lane's own bookkeeping; never re-bump on it.
+    if: ${{ !startsWith(github.event.head_commit.message, 'Release v') }}
+    outputs:
+      tag: ${{ steps.bump.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@stable
+      - id: bump
+        run: |
+          set -euo pipefail
+          line="${GITHUB_REF_NAME#release/}"
+          current="$(grep -m1 '^version' cli/Cargo.toml | cut -d'"' -f2)"
+          case "$current" in
+            "$line".*) ;;
+            *) echo "branch $GITHUB_REF_NAME carries version $current, not a $line.x line" >&2; exit 1 ;;
+          esac
+          # Highest existing tag on this line wins over Cargo.toml, so a branch
+          # cut from an older commit still counts up from the latest patch.
+          latest="$(git tag --list "v$line.*" --sort=-v:refname | head -n1)"
+          base="${latest#v}"; base="${base:-$current}"
+          next="$line.$(( ${base##*.} + 1 ))"
+          echo "bumping $current -> $next on $GITHUB_REF_NAME"
+          perl -pi -e "s/^version = \"\Q$current\E\"/version = \"$next\"/ && !\$done && (\$done = 1)" cli/Cargo.toml
+          grep -q "^version = \"$next\"" cli/Cargo.toml || { echo "version bump did not apply" >&2; exit 1; }
+          (cd cli && cargo update --workspace --quiet && cargo test --workspace --quiet)
+          git config user.name "glide release bot"
+          git config user.email "hello@tryglide.dev"
+          git add cli/Cargo.toml cli/Cargo.lock
+          git commit -m "Release v$next"
+          git tag -a "v$next" -m "glide $next"
+          git push origin "HEAD:$GITHUB_REF_NAME" "v$next"
+          echo "tag=v$next" >> "$GITHUB_OUTPUT"
+
+  publish:
+    needs: bump
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ needs.bump.outputs.tag }}
+    # A called workflow sees no secrets unless the caller hands them over.
+    secrets: inherit
+    permissions:
+      contents: write

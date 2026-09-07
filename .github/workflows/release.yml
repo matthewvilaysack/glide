@@ -1,0 +1,151 @@
+name: Release
+
+# Tag-driven, the way Rust CLIs ship in the open:
+#   scripts/release.sh 0.2.0   ->  tag v0.2.0  ->  this workflow
+# builds one archive per target, signs nothing (a curl|tar install is not
+# quarantined and Homebrew handles its own), publishes a GitHub Release with
+# sha256 sums and generated notes, then bumps the Homebrew tap when a token
+# is present.
+
+on:
+  push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+"]
+  # The patch lane tags from inside a workflow, and a tag pushed with the
+  # workflow token never starts another workflow, so it calls this one instead.
+  workflow_call:
+    inputs:
+      tag:
+        description: "Tag to build and publish, e.g. v0.1.2"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  BIN: glide
+  TAG: ${{ inputs.tag || github.ref_name }}
+
+jobs:
+  build:
+    name: build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { target: aarch64-apple-darwin,       os: macos-14 }
+          - { target: x86_64-apple-darwin,        os: macos-15-intel }
+          - { target: x86_64-unknown-linux-gnu,   os: ubuntu-22.04 }
+          - { target: aarch64-unknown-linux-gnu,  os: ubuntu-22.04-arm }
+    defaults:
+      run:
+        working-directory: cli
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: cli
+          key: ${{ matrix.target }}
+      - name: The tag matches the crate version
+        run: |
+          tag="${TAG#v}"
+          crate="$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)"
+          if [ "$tag" != "$crate" ]; then
+            echo "tag v$tag does not match [workspace.package] version $crate" >&2
+            exit 1
+          fi
+      - run: cargo build --release --locked -p glide-cli --target ${{ matrix.target }}
+      - name: Smoke the built binary
+        run: |
+          "./target/${{ matrix.target }}/release/$BIN" --version
+          "./target/${{ matrix.target }}/release/$BIN" --help > /dev/null
+      - name: Package
+        run: |
+          set -euo pipefail
+          version="${TAG#v}"
+          name="$BIN-$version-${{ matrix.target }}"
+          mkdir -p "dist/$name"
+          cp "target/${{ matrix.target }}/release/$BIN" "dist/$name/"
+          cp README.md "dist/$name/README.md"
+          cp ../LICENSE-MIT ../LICENSE-APACHE "dist/$name/"
+          tar -C dist -czf "dist/$name.tar.gz" "$name"
+          (cd dist && shasum -a 256 "$name.tar.gz" > "$name.tar.gz.sha256")
+          ls -la dist
+      - uses: actions/upload-artifact@v5
+        with:
+          name: ${{ matrix.target }}
+          path: |
+            cli/dist/*.tar.gz
+            cli/dist/*.sha256
+          if-no-files-found: error
+
+  release:
+    name: publish GitHub release
+    needs: build
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
+        with:
+          path: dist
+          merge-multiple: true
+      - id: meta
+        run: echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+      - name: One checksums file for the release page
+        run: |
+          (cd dist && cat ./*.sha256 > checksums.txt && rm ./*.sha256 && cat checksums.txt)
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$TAG" \
+            --title "glide ${{ steps.meta.outputs.version }}" \
+            --generate-notes \
+            dist/*.tar.gz dist/checksums.txt
+
+  homebrew:
+    name: bump the Homebrew tap
+    needs: release
+    runs-on: ubuntu-24.04
+    # Skipped cleanly until a tap repo is configured. The push uses a deploy
+    # key on the tap (secret HOMEBREW_TAP_DEPLOY_KEY), not a personal token.
+    if: ${{ vars.HOMEBREW_TAP_REPO != '' }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Render the formula
+        run: |
+          scripts/homebrew-formula.sh "${{ needs.release.outputs.version }}" dist > glide.rb
+          cat glide.rb
+      - name: Push it to the tap
+        env:
+          DEPLOY_KEY: ${{ secrets.HOMEBREW_TAP_DEPLOY_KEY }}
+          TAP: ${{ vars.HOMEBREW_TAP_REPO }}
+        run: |
+          set -euo pipefail
+          [ -n "$DEPLOY_KEY" ] || { echo "HOMEBREW_TAP_DEPLOY_KEY is not set" >&2; exit 1; }
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/tap_key
+          chmod 600 ~/.ssh/tap_key
+          ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts 2>/dev/null
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/tap_key -o IdentitiesOnly=yes"
+          git clone "git@github.com:${TAP}.git" tap
+          mkdir -p tap/Formula
+          cp glide.rb tap/Formula/glide.rb
+          cd tap
+          git config user.name "glide release bot"
+          git config user.email "hello@tryglide.dev"
+          git add Formula/glide.rb
+          git commit -m "glide ${{ needs.release.outputs.version }}"
+          git push

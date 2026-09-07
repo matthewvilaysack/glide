@@ -1,0 +1,360 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://github.com/matthewvilaysack/skills-documentation/tree/main/sketch",
+  "elements": [
+    {
+      "id": "ing",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_ing"
+      ],
+      "x": 2003.515625,
+      "y": 4.5,
+      "width": 595.984375,
+      "height": 114,
+      "label": {
+        "groupIds": [
+          "subgraph_group_ing"
+        ],
+        "text": "Glide ingestor (cron)",
+        "fontSize": 20,
+        "verticalAlign": "top"
+      }
+    },
+    {
+      "id": "sources",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_sources"
+      ],
+      "x": 0.5,
+      "y": 0,
+      "width": 1953.515625,
+      "height": 123,
+      "label": {
+        "groupIds": [
+          "subgraph_group_sources"
+        ],
+        "text": "per-tenant sources",
+        "fontSize": 20,
+        "verticalAlign": "top"
+      }
+    },
+    {
+      "id": "repo",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_sources"
+      ],
+      "x": 35.5,
+      "y": 25,
+      "width": 192.84375,
+      "height": 73,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_sources"
+        ],
+        "text": "GitHub repo\\n(via tenant PAT)",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "codeowners",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_sources"
+      ],
+      "x": 278.34375,
+      "y": 39.5,
+      "width": 169.59375,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_sources"
+        ],
+        "text": "CODEOWNERS",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "blame",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_sources"
+      ],
+      "x": 497.9375,
+      "y": 39.5,
+      "width": 226.640625,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_sources"
+        ],
+        "text": "git blame heatmap",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "tickets",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_sources"
+      ],
+      "x": 774.578125,
+      "y": 25,
+      "width": 351.578125,
+      "height": 73,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_sources"
+        ],
+        "text": "ticket history\\n(Linear / Jira / GitHub Issues)",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "docs",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_sources"
+      ],
+      "x": 1176.15625,
+      "y": 25,
+      "width": 409.984375,
+      "height": 73,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_sources"
+        ],
+        "text": "internal docs\\n(Notion / Confluence / repo /docs)",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "chans",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_sources"
+      ],
+      "x": 1636.140625,
+      "y": 25,
+      "width": 282.875,
+      "height": 73,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_sources"
+        ],
+        "text": "channel topology\\n(Slack on-call rotations)",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "pull",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_ing"
+      ],
+      "x": 2028.515625,
+      "y": 39.5,
+      "width": 125.046875,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_ing"
+        ],
+        "text": "pull + diff",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "normalize",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_ing"
+      ],
+      "x": 2203.5625,
+      "y": 39.5,
+      "width": 370.9375,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_ing"
+        ],
+        "text": "normalise to MemoryStore facts",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "MemoryStore",
+      "type": "rectangle",
+      "groupIds": [],
+      "x": 2649.5,
+      "y": 25,
+      "width": 242.34375,
+      "height": 73,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [],
+        "text": "MemoryStore\\n(per-tenant volume)",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "agent",
+      "type": "rectangle",
+      "groupIds": [],
+      "x": 2941.84375,
+      "y": 39.5,
+      "width": 175.5,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [],
+        "text": "Agent runtime",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "sources_pull",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 1953.516,
+      "y": 61.5,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          25,
+          0
+        ],
+        [
+          69.69999999999982,
+          0
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "sources"
+      },
+      "end": {
+        "id": "pull"
+      }
+    },
+    {
+      "id": "pull_normalize",
+      "type": "arrow",
+      "groupIds": [
+        "subgraph_group_ing"
+      ],
+      "x": 2153.563,
+      "y": 61.5,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          44.69999999999982,
+          0
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "pull"
+      },
+      "end": {
+        "id": "normalize"
+      }
+    },
+    {
+      "id": "normalize_MemoryStore",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 2574.5,
+      "y": 61.5,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          25,
+          0
+        ],
+        [
+          69.69999999999982,
+          0
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "normalize"
+      },
+      "end": {
+        "id": "MemoryStore"
+      }
+    },
+    {
+      "id": "MemoryStore_agent",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 2891.844,
+      "y": 61.5,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          44.69999999999982,
+          0
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "MemoryStore"
+      },
+      "end": {
+        "id": "agent"
+      }
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": null
+  },
+  "files": {}
+}

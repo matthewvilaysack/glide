@@ -1,0 +1,465 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://github.com/matthewvilaysack/skills-documentation/tree/main/sketch",
+  "elements": [
+    {
+      "id": "bg",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_bg"
+      ],
+      "x": 237.390625,
+      "y": 0,
+      "width": 1072.15625,
+      "height": 275.2734375,
+      "label": {
+        "groupIds": [
+          "subgraph_group_bg"
+        ],
+        "text": "background, every N turns",
+        "fontSize": 20,
+        "verticalAlign": "top"
+      }
+    },
+    {
+      "id": "turn",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_turn"
+      ],
+      "x": 0,
+      "y": 447.2734375,
+      "width": 919.265625,
+      "height": 137.25,
+      "label": {
+        "groupIds": [
+          "subgraph_group_turn"
+        ],
+        "text": "per-turn loop",
+        "fontSize": 20,
+        "verticalAlign": "top"
+      }
+    },
+    {
+      "id": "in",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_turn"
+      ],
+      "x": 25,
+      "y": 488.2734375,
+      "width": 162.390625,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_turn"
+        ],
+        "text": "new message",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "agent",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_turn"
+      ],
+      "x": 292.9765625,
+      "y": 488.2734375,
+      "width": 169.234375,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_turn"
+        ],
+        "text": "agent reasons",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "out",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_turn"
+      ],
+      "x": 717.1015625,
+      "y": 505.5234375,
+      "width": 71.984375,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_turn"
+        ],
+        "text": "reply",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "review",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_bg"
+      ],
+      "x": 262.390625,
+      "y": 125.63671875,
+      "width": 230.40625,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_bg"
+        ],
+        "text": "review profile slots",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "dist",
+      "type": "diamond",
+      "groupIds": [
+        "subgraph_group_bg"
+      ],
+      "x": 663.8203125,
+      "y": 48.36328125,
+      "width": 178.546875,
+      "height": 178.546875,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_bg"
+        ],
+        "text": "size > cap?",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "trim",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_bg"
+      ],
+      "x": 1005.359375,
+      "y": 68.63671875,
+      "width": 279.1875,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_bg"
+        ],
+        "text": "drop lowest-signal lines",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "skip",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_bg"
+      ],
+      "x": 1105.6484375,
+      "y": 162.63671875,
+      "width": 78.609375,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_bg"
+        ],
+        "text": "no-op",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "profile",
+      "type": "rectangle",
+      "groupIds": [],
+      "x": 611.921875,
+      "y": 310.2734375,
+      "width": 282.34375,
+      "height": 102,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [],
+        "text": "MemoryStore\\nUSER slot 1375 chars\\nMEMORY slot 2200 chars",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "in_agent",
+      "type": "arrow",
+      "groupIds": [
+        "subgraph_group_turn"
+      ],
+      "x": 187.391,
+      "y": 510.273,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          25,
+          0
+        ],
+        [
+          50,
+          0
+        ],
+        [
+          100.28600000000003,
+          0
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "in"
+      },
+      "end": {
+        "id": "agent"
+      }
+    },
+    {
+      "id": "agent_out",
+      "type": "arrow",
+      "groupIds": [
+        "subgraph_group_turn"
+      ],
+      "x": 462.211,
+      "y": 518.625,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          90.14800000000002,
+          8.898000000000025
+        ],
+        [
+          249.591,
+          8.898000000000025
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "agent"
+      },
+      "end": {
+        "id": "out"
+      }
+    },
+    {
+      "id": "review_dist",
+      "type": "arrow",
+      "groupIds": [
+        "subgraph_group_bg"
+      ],
+      "x": 492.797,
+      "y": 141.045,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          59.56200000000001,
+          -3.407999999999987
+        ],
+        [
+          166.22299999999996,
+          -2.931999999999988
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "review"
+      },
+      "end": {
+        "id": "dist"
+      }
+    },
+    {
+      "id": "dist_trim",
+      "type": "arrow",
+      "groupIds": [
+        "subgraph_group_bg"
+      ],
+      "x": 823.184,
+      "y": 118.454,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          96.082,
+          -27.816999999999993
+        ],
+        [
+          139.12900000000002,
+          -27.816999999999993
+        ],
+        [
+          176.875,
+          -27.816999999999993
+        ]
+      ],
+      "label": {
+        "text": "yes",
+        "fontSize": 20,
+        "groupIds": [
+          "subgraph_group_bg"
+        ]
+      },
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "dist"
+      },
+      "end": {
+        "id": "trim"
+      }
+    },
+    {
+      "id": "dist_skip",
+      "type": "arrow",
+      "groupIds": [
+        "subgraph_group_bg"
+      ],
+      "x": 823.184,
+      "y": 157.82,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          96.082,
+          26.817000000000007
+        ],
+        [
+          139.12900000000002,
+          26.817000000000007
+        ],
+        [
+          277.164,
+          26.817000000000007
+        ]
+      ],
+      "label": {
+        "text": "no",
+        "fontSize": 20,
+        "groupIds": [
+          "subgraph_group_bg"
+        ]
+      },
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "dist"
+      },
+      "end": {
+        "id": "skip"
+      }
+    },
+    {
+      "id": "agent_profile",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 462.211,
+      "y": 501.921,
+      "strokeWidth": 2,
+      "strokeStyle": "dashed",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          90.14800000000002,
+          -8.897999999999968
+        ],
+        [
+          208.74799999999993,
+          -86.73899999999998
+        ]
+      ],
+      "label": {
+        "text": "writes",
+        "fontSize": 20,
+        "groupIds": []
+      },
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "agent"
+      },
+      "end": {
+        "id": "profile"
+      }
+    },
+    {
+      "id": "review_profile",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 436.294,
+      "y": 169.637,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          116.06500000000005,
+          43.5
+        ],
+        [
+          243.42700000000002,
+          137.48899999999998
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "review"
+      },
+      "end": {
+        "id": "profile"
+      }
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": null
+  },
+  "files": {}
+}

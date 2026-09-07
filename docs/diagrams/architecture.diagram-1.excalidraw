@@ -1,0 +1,752 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://github.com/matthewvilaysack/skills-documentation/tree/main/sketch",
+  "elements": [
+    {
+      "id": "runtime",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_runtime"
+      ],
+      "x": 6.2890625,
+      "y": 317,
+      "width": 1348.83203125,
+      "height": 123,
+      "label": {
+        "groupIds": [
+          "subgraph_group_runtime"
+        ],
+        "text": "Agent runtime (swappable)",
+        "fontSize": 20,
+        "verticalAlign": "top"
+      }
+    },
+    {
+      "id": "iface",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_iface"
+      ],
+      "x": 58.1015625,
+      "y": 173,
+      "width": 1239.3125,
+      "height": 94,
+      "label": {
+        "groupIds": [
+          "subgraph_group_iface"
+        ],
+        "text": "Glide-owned interfaces (stable)",
+        "fontSize": 20,
+        "verticalAlign": "top"
+      }
+    },
+    {
+      "id": "glide",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_glide"
+      ],
+      "x": 0,
+      "y": 0,
+      "width": 1239.296875,
+      "height": 123,
+      "label": {
+        "groupIds": [
+          "subgraph_group_glide"
+        ],
+        "text": "Glide (we own)",
+        "fontSize": 20,
+        "verticalAlign": "top"
+      }
+    },
+    {
+      "id": "intern",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_glide"
+      ],
+      "x": 35,
+      "y": 25,
+      "width": 271.875,
+      "height": 73,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_glide"
+        ],
+        "text": "intern chat surface\\n(Telegram or Slack DM)",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "mgr",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_glide"
+      ],
+      "x": 356.875,
+      "y": 25,
+      "width": 383.09375,
+      "height": 73,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_glide"
+        ],
+        "text": "manager view\\n(Vite + React app in src/App.tsx)",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "src",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_glide"
+      ],
+      "x": 789.96875,
+      "y": 25,
+      "width": 414.328125,
+      "height": 73,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_glide"
+        ],
+        "text": "source-of-truth ingestor\\n(repo, CODEOWNERS, tickets, docs)",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "chatI",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_iface"
+      ],
+      "x": 93.1015625,
+      "y": 198,
+      "width": 155.671875,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_iface"
+        ],
+        "text": "ChatAdapter",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "memI",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_iface"
+      ],
+      "x": 396.984375,
+      "y": 198,
+      "width": 161.296875,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_iface"
+        ],
+        "text": "MemoryStore",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "skillI",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_iface"
+      ],
+      "x": 949.359375,
+      "y": 198,
+      "width": 135.546875,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_iface"
+        ],
+        "text": "SkillEngine",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "schedI",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_iface"
+      ],
+      "x": 1134.90625,
+      "y": 198,
+      "width": 125.015625,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_iface"
+        ],
+        "text": "Scheduler",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "hermes",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_runtime"
+      ],
+      "x": 41.2890625,
+      "y": 342,
+      "width": 246.71875,
+      "height": 73,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_runtime"
+        ],
+        "text": "Hermes Agent\\n(V1 implementation)",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "other",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_runtime"
+      ],
+      "x": 969.15234375,
+      "y": 342,
+      "width": 350.96875,
+      "height": 73,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_runtime"
+        ],
+        "text": "any future runtime\\n(OpenClaw, custom, in-house)",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "intern_chatI",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 170.938,
+      "y": 98,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          25
+        ],
+        [
+          0,
+          50
+        ],
+        [
+          0,
+          94.69999999999999
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "intern"
+      },
+      "end": {
+        "id": "chatI"
+      }
+    },
+    {
+      "id": "mgr_memI",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 450.476,
+      "y": 98,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -67.08499999999998,
+          25
+        ],
+        [
+          -67.08499999999998,
+          50
+        ],
+        [
+          -67.08499999999998,
+          75
+        ],
+        [
+          -21.699000000000012,
+          97.63499999999999
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "mgr"
+      },
+      "end": {
+        "id": "memI"
+      }
+    },
+    {
+      "id": "mgr_skillI",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 695.648,
+      "y": 98,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          100.84000000000003,
+          25
+        ],
+        [
+          100.84000000000003,
+          50
+        ],
+        [
+          100.84000000000003,
+          75
+        ],
+        [
+          248.52800000000002,
+          106.459
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "mgr"
+      },
+      "end": {
+        "id": "skillI"
+      }
+    },
+    {
+      "id": "src_memI",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 821.966,
+      "y": 98,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -119.97799999999995,
+          25
+        ],
+        [
+          -119.97799999999995,
+          50
+        ],
+        [
+          -119.97799999999995,
+          75
+        ],
+        [
+          -258.49699999999996,
+          104.018
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "src"
+      },
+      "end": {
+        "id": "memI"
+      }
+    },
+    {
+      "id": "src_skillI",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 1071.197,
+      "y": 98,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          50.72900000000004,
+          25
+        ],
+        [
+          50.72900000000004,
+          50
+        ],
+        [
+          50.72900000000004,
+          75
+        ],
+        [
+          -0.17599999999993088,
+          97.83099999999999
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "src"
+      },
+      "end": {
+        "id": "skillI"
+      }
+    },
+    {
+      "id": "chatI_hermes",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 158.632,
+      "y": 242,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -13.984000000000009,
+          25
+        ],
+        [
+          -13.984000000000009,
+          50
+        ],
+        [
+          -13.984000000000009,
+          75
+        ],
+        [
+          -7.492999999999995,
+          94.95999999999998
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "chatI"
+      },
+      "end": {
+        "id": "hermes"
+      }
+    },
+    {
+      "id": "memI_hermes",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 414.796,
+      "y": 242,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -71.40499999999997,
+          25
+        ],
+        [
+          -71.40499999999997,
+          50
+        ],
+        [
+          -71.40499999999997,
+          75
+        ],
+        [
+          -139.053,
+          98.27600000000001
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "memI"
+      },
+      "end": {
+        "id": "hermes"
+      }
+    },
+    {
+      "id": "skillI_hermes",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 949.359,
+      "y": 227.418,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -361.61300000000006,
+          39.581999999999994
+        ],
+        [
+          -361.61300000000006,
+          64.582
+        ],
+        [
+          -361.61300000000006,
+          89.582
+        ],
+        [
+          -656.106,
+          132.389
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "skillI"
+      },
+      "end": {
+        "id": "hermes"
+      }
+    },
+    {
+      "id": "schedI_hermes",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 1134.906,
+      "y": 225.766,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -447.019,
+          41.23400000000001
+        ],
+        [
+          -447.019,
+          66.23400000000001
+        ],
+        [
+          -447.019,
+          91.23400000000001
+        ],
+        [
+          -841.634,
+          137.616
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "schedI"
+      },
+      "end": {
+        "id": "hermes"
+      }
+    },
+    {
+      "id": "chatI_other",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 248.773,
+      "y": 226.813,
+      "strokeWidth": 2,
+      "strokeStyle": "dashed",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          459.1139999999999,
+          40.18700000000001
+        ],
+        [
+          459.1139999999999,
+          65.18700000000001
+        ],
+        [
+          459.1139999999999,
+          90.18700000000001
+        ],
+        [
+          715.131,
+          126.238
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "chatI"
+      },
+      "end": {
+        "id": "other"
+      }
+    },
+    {
+      "id": "memI_other",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 558.281,
+      "y": 231.003,
+      "strokeWidth": 2,
+      "strokeStyle": "dashed",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          263.84800000000007,
+          35.997000000000014
+        ],
+        [
+          263.84800000000007,
+          60.997000000000014
+        ],
+        [
+          263.84800000000007,
+          85.99700000000001
+        ],
+        [
+          405.6650000000001,
+          113.041
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "memI"
+      },
+      "end": {
+        "id": "other"
+      }
+    },
+    {
+      "id": "skillI_other",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 1075.106,
+      "y": 242,
+      "strokeWidth": 2,
+      "strokeStyle": "dashed",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          65.87799999999993,
+          25
+        ],
+        [
+          65.87799999999993,
+          50
+        ],
+        [
+          67.04899999999998,
+          94.709
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "skillI"
+      },
+      "end": {
+        "id": "other"
+      }
+    },
+    {
+      "id": "schedI_other",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 1217.875,
+      "y": 242,
+      "strokeWidth": 2,
+      "strokeStyle": "dashed",
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          23.25,
+          25
+        ],
+        [
+          23.25,
+          50
+        ],
+        [
+          23.25,
+          75
+        ],
+        [
+          -11.503999999999905,
+          97.15100000000001
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "schedI"
+      },
+      "end": {
+        "id": "other"
+      }
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": null
+  },
+  "files": {}
+}

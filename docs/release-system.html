@@ -1,0 +1,210 @@
+<title>Glide release system</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Shippori+Mincho:wght@500;700&display=swap">
+<style>
+  /* Glide's own tokens, from docs/a2ui-cli-design.md: dark shell chrome carrying light surfaces, saffron as the one accent. */
+  :root {
+    --shell: #0e0f12; --bar: #191c22; --mono: #c9cdd6; --prompt: #7fae6b;
+    --paper: #f7f8fa; --card: #ffffff; --ink: #17191f; --border: #e4e6ea; --muted: #6b7080;
+    --saffron: #d9772f; --ok: #2f7d4f; --ok-bg: #e7f3ec; --warn: #9a5b00; --warn-bg: #fbf0dc; --off: #8a8f9c; --off-bg: #eef0f3;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  :where(.grid, .flex) > * { min-width: 0; }
+  :where(p, h1, h2, h3, li, td, th, dd, code) { overflow-wrap: anywhere; }
+  html { background: var(--paper); }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: Inter, system-ui, sans-serif; font-size: 16px; line-height: 1.55; }
+  header.shell { background: var(--shell); color: var(--mono); font-family: "JetBrains Mono", ui-monospace, monospace; }
+  .bar { background: var(--bar); padding: 10px 24px; font-size: 13px; display: flex; gap: 16px; align-items: center; }
+  .bar .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--saffron); display: inline-block; }
+  .shell .inner { padding: 28px 24px 26px; max-width: 1080px; margin: 0 auto; }
+  .shell h1 { font-family: "Shippori Mincho", Georgia, serif; font-weight: 700; color: #fff; font-size: 30px; margin: 0 0 8px; line-height: 1.2; }
+  .shell .sub { margin: 0; font-size: 14px; color: var(--mono); max-width: 78ch; }
+  .prompt { color: var(--prompt); }
+  main { max-width: 1080px; margin: 0 auto; padding: 24px; display: grid; gap: 28px; }
+  section h2 { font-family: "Shippori Mincho", Georgia, serif; font-weight: 500; font-size: 22px; margin: 0 0 12px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+  .grid { display: grid; gap: 16px; }
+  .cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (max-width: 860px) { .cols-3, .cols-2 { grid-template-columns: minmax(0, 1fr); } }
+  .stat { display: grid; gap: 4px; }
+  .stat .k { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .stat .v { font-family: "JetBrains Mono", monospace; font-size: 22px; font-weight: 500; }
+  .stat .d { font-size: 13px; color: var(--muted); }
+  .pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px; white-space: nowrap; }
+  .pill.ok { color: var(--ok); background: var(--ok-bg); }
+  .pill.warn { color: var(--warn); background: var(--warn-bg); }
+  .pill.off { color: var(--off); background: var(--off-bg); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 12px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .scroll { overflow-x: auto; }
+  code, .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 13px; }
+  code { background: var(--off-bg); padding: 1px 6px; border-radius: 4px; }
+  pre { background: var(--shell); color: var(--mono); font-family: "JetBrains Mono", monospace; font-size: 13px; padding: 14px 16px; border-radius: 8px; overflow-x: auto; margin: 0; line-height: 1.5; }
+  pre .c { color: #7c8290; }
+  pre .p { color: var(--prompt); }
+  figure { margin: 0; }
+  figure svg { width: 100%; height: auto; display: block; }
+  figcaption { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  a { color: var(--saffron); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  ul.plain { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
+  .note { border-left: 3px solid var(--saffron); padding-left: 12px; color: var(--ink); }
+  .muted { color: var(--muted); }
+</style>
+
+<header class="shell">
+  <div class="bar"><span class="dot"></span><span>glide · release system</span><span class="muted">·</span><span id="bar-status">v0.1.3 · every lane proven · <a href="https://github.com/matthewvilaysack/glide/releases" style="color:#d9772f">releases</a> · <a href="https://github.com/matthewvilaysack/homebrew-glide" style="color:#d9772f">tap</a></span></div>
+  <div class="inner">
+    <h1>How glide ships now</h1>
+    <p class="sub"><span class="prompt">$</span> scripts/release.sh 0.1.1 &nbsp;→&nbsp; tag &nbsp;→&nbsp; four binaries, checksums, a GitHub Release, a brew formula. A fix for a shipped line goes through the patch lane and never waits for main.</p>
+  </div>
+</header>
+
+<main>
+
+<section id="status" aria-labelledby="status-h">
+  <h2 id="status-h">Where it stands</h2>
+  <div class="grid cols-3">
+    <div class="card stat" id="stat-release"><span class="k">Releases</span><span class="v" id="release-version">0.1.1 → 0.1.3</span><span class="d" id="release-outcome">0.1.1 from a tag on main · 0.1.2 and 0.1.3 from the patch lane · tap pushed by the bot on 0.1.3</span></div>
+    <div class="card stat" id="stat-ci"><span class="k">CI on main</span><span class="v">green</span><span class="d">fmt · clippy -D warnings · tests · --version smoke, Linux + macOS</span></div>
+    <div class="card stat" id="stat-prs"><span class="k">PRs merged today</span><span class="v">4</span><span class="d">#10 pipeline + patch lane · #11 focus + MCP · #12, #13 through the patch lane</span></div>
+  </div>
+  <div class="card" style="margin-top:16px" id="assets-card">
+    <strong>Published assets</strong>
+    <ul class="plain mono" id="assets-list">
+      <li>glide-0.1.1-aarch64-apple-darwin.tar.gz <span class="muted">3.5 MB</span></li>
+      <li>glide-0.1.1-x86_64-apple-darwin.tar.gz <span class="muted">3.7 MB</span></li>
+      <li>glide-0.1.1-x86_64-unknown-linux-gnu.tar.gz <span class="muted">3.9 MB</span></li>
+      <li>glide-0.1.1-aarch64-unknown-linux-gnu.tar.gz <span class="muted">3.7 MB</span></li>
+      <li>checksums.txt <span class="muted">one line per archive</span></li>
+    </ul>
+    <p class="muted" style="margin:10px 0 0;font-size:13px">Installer verified on this Mac against the published release: fetched the Apple Silicon archive through the API (the repo is private), matched its checksum, and the installed binary reports 0.1.1 and reads the vault. A tampered checksum is refused with a clear message.</p>
+  </div>
+</section>
+
+<section id="flow" aria-labelledby="flow-h">
+  <h2 id="flow-h">The two lanes</h2>
+  <div class="grid cols-2">
+    <div class="card">
+      <figure>
+        <svg viewBox="0 0 520 300" role="img" aria-labelledby="lane-main-t">
+          <title id="lane-main-t">Main lane: PR to CI to merge to release script to tag to Release workflow</title>
+          <defs><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+          <g fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#a1)" color="#6b7080">
+            <path d="M120 40 H150"/><path d="M270 40 H300"/><path d="M420 40 H450"/>
+            <path d="M485 62 V90 H60 V118"/>
+            <path d="M120 140 H150"/><path d="M270 140 H300"/><path d="M420 140 H450"/>
+            <path d="M485 162 V190 H60 V218"/>
+            <path d="M120 240 H150"/><path d="M270 240 H300"/>
+          </g>
+          <g font-family="Inter, system-ui" font-size="12" text-anchor="middle">
+            <g id="n-pr"><rect x="10" y="20" width="110" height="40" rx="8" fill="#fff" stroke="#e4e6ea"/><text x="65" y="44" fill="#17191f">pull request</text></g>
+            <g id="n-ci"><rect x="150" y="20" width="120" height="40" rx="8" fill="#fff" stroke="#e4e6ea"/><text x="210" y="44" fill="#17191f">ci.yml</text></g>
+            <g id="n-merge"><rect x="300" y="20" width="120" height="40" rx="8" fill="#fff" stroke="#e4e6ea"/><text x="360" y="44" fill="#17191f">merge to main</text></g>
+            <g id="n-ci2"><rect x="450" y="20" width="60" height="40" rx="8" fill="#fff" stroke="#e4e6ea"/><text x="480" y="44" fill="#17191f">CI</text></g>
+            <g id="n-script"><rect x="10" y="120" width="110" height="40" rx="8" fill="#fbf0dc" stroke="#d9772f"/><text x="65" y="138" fill="#17191f">release.sh</text><text x="65" y="152" fill="#6b7080" font-size="10">bump · commit · tag</text></g>
+            <g id="n-tag"><rect x="150" y="120" width="120" height="40" rx="8" fill="#fff" stroke="#e4e6ea"/><text x="210" y="144" fill="#17191f" font-family="JetBrains Mono, monospace">v0.1.1</text></g>
+            <g id="n-guard"><rect x="300" y="120" width="120" height="40" rx="8" fill="#fff" stroke="#e4e6ea"/><text x="360" y="138" fill="#17191f">tag == crate?</text><text x="360" y="152" fill="#6b7080" font-size="10">refuses a mistyped tag</text></g>
+            <g id="n-build"><rect x="450" y="120" width="60" height="40" rx="8" fill="#fff" stroke="#e4e6ea"/><text x="480" y="138" fill="#17191f">4 builds</text><text x="480" y="152" fill="#6b7080" font-size="10">--locked</text></g>
+            <g id="n-pkg"><rect x="10" y="220" width="110" height="40" rx="8" fill="#fff" stroke="#e4e6ea"/><text x="65" y="238" fill="#17191f">tarballs</text><text x="65" y="252" fill="#6b7080" font-size="10">+ sha256 each</text></g>
+            <g id="n-rel"><rect x="150" y="220" width="120" height="40" rx="8" fill="#e7f3ec" stroke="#2f7d4f"/><text x="210" y="238" fill="#17191f">GitHub Release</text><text x="210" y="252" fill="#6b7080" font-size="10">notes + checksums.txt</text></g>
+            <g id="n-tap"><rect x="300" y="220" width="120" height="40" rx="8" fill="#eef0f3" stroke="#8a8f9c" stroke-dasharray="4 3"/><text x="360" y="238" fill="#17191f">brew tap</text><text x="360" y="252" fill="#6b7080" font-size="10">skipped until configured</text></g>
+          </g>
+        </svg>
+        <figcaption>Main lane. Every merge is gated by CI; a release is a deliberate tag, not a side effect of merging.</figcaption>
+      </figure>
+    </div>
+    <div class="card">
+      <figure>
+        <svg viewBox="0 0 520 300" role="img" aria-labelledby="lane-patch-t">
+          <title id="lane-patch-t">Patch lane: fix on main, patch.sh cherry-picks onto release branch, PR, merge bumps patch and tags, Release workflow</title>
+          <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+          <g fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#a2)" color="#6b7080">
+            <path d="M120 40 H150"/><path d="M270 40 H300"/><path d="M420 40 H450"/>
+            <path d="M485 62 V90 H60 V118"/>
+            <path d="M120 140 H150"/><path d="M270 140 H300"/><path d="M420 140 H450"/>
+            <path d="M485 162 V190 H60 V218"/>
+            <path d="M120 240 H150"/>
+          </g>
+          <g font-family="Inter, system-ui" font-size="12" text-anchor="middle">
+            <g id="p-fix"><rect x="10" y="20" width="110" height="40" rx="8" fill="#fff" stroke="#e4e6ea"/><text x="65" y="38" fill="#17191f">fix lands on main</text><text x="65" y="52" fill="#6b7080" font-size="10">never lost</text></g>
+            <g id="p-script"><rect x="150" y="20" width="120" height="40" rx="8" fill="#fbf0dc" stroke="#d9772f"/><text x="210" y="38" fill="#17191f">patch.sh &lt;sha&gt;</text><text x="210" y="52" fill="#6b7080" font-size="10">cuts release/0.1 if needed</text></g>
+            <g id="p-cp"><rect x="300" y="20" width="120" height="40" rx="8" fill="#fff" stroke="#e4e6ea"/><text x="360" y="38" fill="#17191f">cherry-pick -x</text><text x="360" y="52" fill="#6b7080" font-size="10">onto release/0.1</text></g>
+            <g id="p-pr"><rect x="450" y="20" width="60" height="40" rx="8" fill="#fff" stroke="#e4e6ea"/><text x="480" y="38" fill="#17191f">PR</text><text x="480" y="52" fill="#6b7080" font-size="10">label patch</text></g>
+            <g id="p-ci"><rect x="10" y="120" width="110" height="40" rx="8" fill="#fff" stroke="#e4e6ea"/><text x="65" y="144" fill="#17191f">ci.yml</text></g>
+            <g id="p-merge"><rect x="150" y="120" width="120" height="40" rx="8" fill="#fff" stroke="#e4e6ea"/><text x="210" y="144" fill="#17191f">merge to release/0.1</text></g>
+            <g id="p-bump"><rect x="300" y="120" width="120" height="40" rx="8" fill="#fbf0dc" stroke="#d9772f"/><text x="360" y="138" fill="#17191f">patch-release.yml</text><text x="360" y="152" fill="#6b7080" font-size="10">PATCH+1 · commit · tag</text></g>
+            <g id="p-tag"><rect x="450" y="120" width="60" height="40" rx="8" fill="#fff" stroke="#e4e6ea"/><text x="480" y="144" fill="#17191f" font-family="JetBrains Mono, monospace">v0.1.2</text></g>
+            <g id="p-call"><rect x="10" y="220" width="110" height="40" rx="8" fill="#fff" stroke="#e4e6ea"/><text x="65" y="238" fill="#17191f">workflow_call</text><text x="65" y="252" fill="#6b7080" font-size="10">a bot tag can't trigger a run</text></g>
+            <g id="p-rel"><rect x="150" y="220" width="120" height="40" rx="8" fill="#e7f3ec" stroke="#2f7d4f"/><text x="210" y="238" fill="#17191f">Release workflow</text><text x="210" y="252" fill="#6b7080" font-size="10">same jobs as main</text></g>
+          </g>
+        </svg>
+        <figcaption>Patch lane: lazy <code>release/X.Y</code> branches, upstream-first fixes, PATCH bumped from the line, never from main's numbering.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="prs" aria-labelledby="prs-h">
+  <h2 id="prs-h">What landed today</h2>
+  <div class="card scroll">
+    <table>
+      <thead><tr><th>PR</th><th>What</th><th>Checks</th><th>State</th></tr></thead>
+      <tbody>
+        <tr id="pr-10"><td class="mono"><a href="https://github.com/matthewvilaysack/glide/pull/10">#10</a></td><td>CI and a tag-driven release pipeline with the patch lane. Also the formatting and clippy pass so main passes its own CI.</td><td><span class="pill ok">CI green on main</span></td><td><span class="pill ok">merged</span></td></tr>
+        <tr id="pr-11"><td class="mono"><a href="https://github.com/matthewvilaysack/glide/pull/11">#11</a></td><td>glide focus and an MCP server over the daily note (vault contract, six tools, console strip).</td><td><span class="pill ok">ubuntu + macos green</span></td><td><span class="pill ok">merged</span></td></tr>
+        <tr id="fix-sed"><td class="mono">main</td><td>Follow-up found by the first release attempt: the version bump used a GNU-only sed address, so on macOS nothing changed and the script stopped before tagging. Now perl, portable, and asserted.</td><td><span class="pill ok">CI green</span></td><td><span class="pill ok">pushed</span></td></tr>
+        <tr id="fix-installer"><td class="mono">main</td><td>Found by installing the real release: a private repo's assets are not served from the plain download URL even with a token. The installer now goes through the API asset endpoint when a token is set, and keys the asset by its URL rather than the first id in the JSON.</td><td><span class="pill ok">verified by hand</span></td><td><span class="pill ok">pushed</span></td></tr>
+        <tr id="pr-12"><td class="mono"><a href="https://github.com/matthewvilaysack/glide/pull/12">#12</a></td><td>First patch PR: three release-tooling fixes cherry-picked onto <code>release/0.1</code>. Merging bumped to 0.1.2, tagged, and published.</td><td><span class="pill ok">4 builds green</span></td><td><span class="pill ok">merged · shipped</span></td></tr>
+        <tr id="fix-secrets"><td class="mono">main</td><td>Found by v0.1.2: a reusable workflow sees no secrets unless the caller passes <code>secrets: inherit</code>, so the tap push had no key. Fixed and proven: 0.1.3 went through the patch lane and the release bot pushed <code>Formula/glide.rb</code> to the tap itself. One build flaked on a GitHub artifact-service timeout; <code>gh run rerun --failed</code> finished it, and the runbook now says so.</td><td><span class="pill ok">tap push green</span></td><td><span class="pill ok">shipped</span></td></tr>
+        <tr id="fix-node"><td class="mono">main</td><td>Actions moved to the Node 24 releases (checkout v5, artifact v5) after the deprecation annotation on the first CI run.</td><td><span class="pill ok">CI green</span></td><td><span class="pill ok">pushed</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="config" aria-labelledby="config-h">
+  <h2 id="config-h">Configured vs. waiting on you</h2>
+  <div class="grid cols-2">
+    <div class="card" id="cfg-on">
+      <strong>Live</strong>
+      <ul class="plain">
+        <li>CI on PRs and pushes to <code>main</code> and <code>release/**</code></li>
+        <li>Tag-driven release, four targets: Apple Silicon, Intel Mac, Linux x86_64, Linux arm64</li>
+        <li>Checksums per archive plus one <code>checksums.txt</code></li>
+        <li>Patch lane proven end to end: PR #12 on <code>release/0.1</code> → v0.1.2 tagged and published by the workflow</li>
+        <li>Homebrew tap <code>matthewvilaysack/homebrew-glide</code>, pushed over a deploy key by the workflow; <code>brew info</code> resolves 0.1.3</li>
+        <li><code>install.sh</code> with checksum verification</li>
+      </ul>
+    </div>
+    <div class="card" id="cfg-off">
+      <strong>Needs a decision</strong>
+      <ul class="plain">
+        <li><span class="pill warn">public?</span> The repo is private. Going public would expose <code>docs/outreach</code> (a ranked prospect list with hooks and contact status), the cold-outreach templates, the pitch and demo script, and your personal email in three docs. Until it flips, <code>brew install</code> cannot download assets and <code>install.sh</code> needs <code>GITHUB_TOKEN</code>. Options: flip as is, move the GTM docs to the vault first, or keep it private and ship the binary through the tap only once public.</li>
+        <li><span class="pill off">windows</span> No Windows build; one matrix row when someone asks.</li>
+        <li><span class="pill off">self-update</span> None; the installer and brew are the update path.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="cheatsheet" aria-labelledby="cheat-h">
+  <h2 id="cheat-h">Day to day</h2>
+  <div class="card">
+<pre><span class="c"># ship</span>
+<span class="p">$</span> scripts/release.sh 0.2.0            <span class="c"># from clean, current main; refuses otherwise</span>
+<span class="p">$</span> gh run watch --repo matthewvilaysack/glide
+
+<span class="c"># patch a shipped line</span>
+<span class="p">$</span> scripts/patch.sh &lt;sha-on-main&gt;        <span class="c"># cuts release/0.1 from v0.1.0 if missing, opens the PR</span>
+<span class="c"># merge the PR  →  v0.1.x tagged and published</span>
+
+<span class="c"># install what shipped</span>
+<span class="p">$</span> curl -fsSL https://raw.githubusercontent.com/matthewvilaysack/glide/main/install.sh | sh
+<span class="p">$</span> brew install matthewvilaysack/glide/glide   <span class="c"># once the tap exists</span></pre>
+  </div>
+  <p class="note" style="margin-top:14px">Runbook: <code>docs/releasing.md</code>. Nothing is signed or notarized; a curl or brew install is not quarantined, so checksums are the guard.</p>
+</section>
+
+</main>

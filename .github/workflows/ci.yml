@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "release/**"]
+    paths: ["cli/**", ".github/workflows/ci.yml"]
+  pull_request:
+    branches: [main, "release/**"]
+    paths: ["cli/**", ".github/workflows/ci.yml"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: cli
+
+jobs:
+  check:
+    name: fmt, clippy, test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-14]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: cli
+      - run: ../scripts/fmt.sh --check
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+      - run: cargo test --workspace
+      - name: The binary answers --version and --help
+        run: |
+          cargo build -p glide-cli
+          ./target/debug/glide --version
+          ./target/debug/glide --help > /dev/null

@@ -1,0 +1,38 @@
+[package]
+name = "glide-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[[bin]]
+name = "glide"
+path = "src/main.rs"
+
+[features]
+default = ["console"]
+console = ["dep:glide-tui"]
+anthropic = ["glide-llm/anthropic"]
+
+[dependencies]
+glide-common = { workspace = true }
+glide-graph = { workspace = true }
+glide-core = { workspace = true }
+glide-llm = { workspace = true }
+glide-tui = { workspace = true, optional = true }
+glide-vault = { workspace = true }
+rmcp = { workspace = true }
+schemars = { workspace = true }
+tokio = { workspace = true }
+clap = { workspace = true }
+clap_complete = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+toml = { workspace = true }
+anyhow = { workspace = true }
+chrono = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+is-terminal = { workspace = true }
+owo-colors = { workspace = true }

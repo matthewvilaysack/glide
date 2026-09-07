@@ -1,0 +1,385 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://github.com/matthewvilaysack/skills-documentation/tree/main/sketch",
+  "elements": [
+    {
+      "id": "host",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_host"
+      ],
+      "x": 0,
+      "y": 79,
+      "width": 1172.828125,
+      "height": 308,
+      "label": {
+        "groupIds": [
+          "subgraph_group_host"
+        ],
+        "text": "one VPS host",
+        "fontSize": 20,
+        "verticalAlign": "top"
+      }
+    },
+    {
+      "id": "t2",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_t2",
+        "subgraph_group_host"
+      ],
+      "x": 451.875,
+      "y": 258,
+      "width": 696.453125,
+      "height": 94,
+      "label": {
+        "groupIds": [
+          "subgraph_group_t2",
+          "subgraph_group_host"
+        ],
+        "text": "tenant: globex",
+        "fontSize": 20,
+        "verticalAlign": "top"
+      }
+    },
+    {
+      "id": "t1",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_t1",
+        "subgraph_group_host"
+      ],
+      "x": 451.875,
+      "y": 114,
+      "width": 696.453125,
+      "height": 94,
+      "label": {
+        "groupIds": [
+          "subgraph_group_t1",
+          "subgraph_group_host"
+        ],
+        "text": "tenant: acme",
+        "fontSize": 20,
+        "verticalAlign": "top"
+      }
+    },
+    {
+      "id": "docker",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_host"
+      ],
+      "x": 116.59375,
+      "y": 149,
+      "width": 193.1875,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_host"
+        ],
+        "text": "Docker Manager",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "a1",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_t1",
+        "subgraph_group_host"
+      ],
+      "x": 486.875,
+      "y": 139,
+      "width": 173.890625,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_t1",
+          "subgraph_group_host"
+        ],
+        "text": "agent runtime",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "m1",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_t1",
+        "subgraph_group_host"
+      ],
+      "x": 710.765625,
+      "y": 139,
+      "width": 194.21875,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_t1",
+          "subgraph_group_host"
+        ],
+        "text": "memory volume",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "s1",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_t1",
+        "subgraph_group_host"
+      ],
+      "x": 954.984375,
+      "y": 139,
+      "width": 158.34375,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_t1",
+          "subgraph_group_host"
+        ],
+        "text": "skills volume",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "a2",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_t2",
+        "subgraph_group_host"
+      ],
+      "x": 486.875,
+      "y": 283,
+      "width": 173.890625,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_t2",
+          "subgraph_group_host"
+        ],
+        "text": "agent runtime",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "m2",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_t2",
+        "subgraph_group_host"
+      ],
+      "x": 710.765625,
+      "y": 283,
+      "width": 194.21875,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_t2",
+          "subgraph_group_host"
+        ],
+        "text": "memory volume",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "s2",
+      "type": "rectangle",
+      "groupIds": [
+        "subgraph_group_t2",
+        "subgraph_group_host"
+      ],
+      "x": 954.984375,
+      "y": 283,
+      "width": 158.34375,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [
+          "subgraph_group_t2",
+          "subgraph_group_host"
+        ],
+        "text": "skills volume",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "ext1",
+      "type": "rectangle",
+      "groupIds": [],
+      "x": 64.078125,
+      "y": 0,
+      "width": 298.21875,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [],
+        "text": "Acme repos + Acme Slack",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "ext2",
+      "type": "rectangle",
+      "groupIds": [],
+      "x": 25,
+      "y": 422,
+      "width": 376.375,
+      "height": 44,
+      "strokeWidth": 2,
+      "label": {
+        "groupIds": [],
+        "text": "Globex repos + Globex Telegram",
+        "fontSize": 20
+      },
+      "link": null
+    },
+    {
+      "id": "docker_t1",
+      "type": "arrow",
+      "groupIds": [
+        "subgraph_group_host"
+      ],
+      "x": 309.781,
+      "y": 152.423,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          116.594,
+          -22.423000000000002
+        ],
+        [
+          136.312,
+          -20.784999999999997
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "docker"
+      },
+      "end": {
+        "id": "t1"
+      }
+    },
+    {
+      "id": "docker_t2",
+      "type": "arrow",
+      "groupIds": [
+        "subgraph_group_host"
+      ],
+      "x": 278.328,
+      "y": 193,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          148.04700000000003,
+          50
+        ],
+        [
+          233.115,
+          64.13099999999997
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "docker"
+      },
+      "end": {
+        "id": "t2"
+      }
+    },
+    {
+      "id": "ext1_t1",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 236.521,
+      "y": 44,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          189.854,
+          179
+        ],
+        [
+          274.922,
+          164.869
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "ext1"
+      },
+      "end": {
+        "id": "t1"
+      }
+    },
+    {
+      "id": "ext2_t2",
+      "type": "arrow",
+      "groupIds": [],
+      "x": 256.615,
+      "y": 422,
+      "strokeWidth": 2,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          169.76,
+          -86
+        ],
+        [
+          189.478,
+          -87.63799999999998
+        ]
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "start": {
+        "id": "ext2"
+      },
+      "end": {
+        "id": "t2"
+      }
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": null
+  },
+  "files": {}
+}
