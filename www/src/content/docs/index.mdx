@@ -33,6 +33,69 @@ Six verbs, one note, and the status bar tells the truth all day.
 - **Capture.** Ideas and questions, one line into Notes without leaving the shell.
 - **Agents.** Claude Code, Warp, or any MCP client gets the same six verbs, with standing instructions to read your focus at the start of a session and log at the end.
 
+## Every verb
+
+`glide --help`, as of 0.4.1:
+
+```
+Single Rust binary for the glide onboarding agent. Indexes the local repo into a SQLite knowledge graph, then answers ownership questions, drafts day-1 plans, and files access requests without leaving the machine.
+
+Usage: glide [OPTIONS] [COMMAND]
+
+Commands:
+  console     Open the block console (also what bare `glide` does on a terminal)
+  init        Bootstrap .glide/ in the current repo
+  index       Manage the on-device knowledge graph
+  who-owns    Answer ownership questions from the graph
+  plan        Generate a personalized day-1 plan
+  request     Draft an access request
+  friction    Log or summarize ramp-friction events
+  config      Read or write the layered TOML config
+  doctor      Diagnostics: config, db, git, indexer health
+  models      List configured LLM providers + active model
+  tools       Manage external tools (e.g. repomix)
+  focus       Keep today's priorities in view: show, set, finish, capture, log
+  show        Today's focus strip and the Focus list (same as `glide focus show`) [aliases: status]
+  today       Print today's note (same as `glide focus today`)
+  build       Build the on-device graph (same as `glide index build`)
+  mcp         Serve glide's tools to a terminal agent over the Model Context Protocol
+  prime       Print the workflow context an agent needs at session start (for hooks)
+  setup       Wire glide into an agent: `claude` installs a SessionStart hook, `warp` prints the rule
+  onboard     Print the paragraph to paste into any agent's instructions file
+  completion  Emit shell completions
+  help        Print this message or the help of the given subcommand(s)
+
+Options:
+  -p, --prompt <PROMPT>
+          One-shot mode: route the prompt to the right verb and exit
+
+      --stream <MODE>
+          Output stream mode: human | ndjson | off
+
+      --json
+          Force the final result to be structured JSON
+
+      --no-color
+          Disable ANSI color
+
+  -q, --quiet
+          Suppress non-essential output
+
+  -s, --safe
+          Strip write/network tools for this invocation (matches NCA's --safe)
+
+      --debug
+          Enable verbose tracing (glide=debug). Equivalent to GLIDE_LOG=debug
+
+  -h, --help
+          Print help (see a summary with '-h')
+
+  -V, --version
+          Print version
+```
+
+`glide <verb> --help` explains each one; the full table is in the [CLI reference](/docs/reference/cli/).
+
 ## What it never does
 
 Glide reads and edits four sections of today's note: Focus, Tasks, Record, Notes.
