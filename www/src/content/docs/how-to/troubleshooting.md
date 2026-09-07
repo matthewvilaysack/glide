@@ -6,7 +6,7 @@ description: The handful of things that go wrong, and what glide says when they 
 ## "vault path is not set"
 
 `~/.glide/config.toml` has no `[vault] path`, or it points somewhere that does not exist.
-Set it (see [Config](/docs/config/)) or export `GLIDE_VAULT_PATH` for one command.
+Set it (see [Config](/docs/reference/config/)) or export `GLIDE_VAULT_PATH` for one command.
 
 ## The strip says "no focus set" but the note has a Focus list
 
@@ -26,7 +26,7 @@ The hook only fires on new sessions and after compaction, not mid-session.
 
 ## `brew install` cannot download
 
-The tap points at the public releases; if a corporate proxy blocks GitHub downloads, use the [installer](/docs/install/) with `GLIDE_INSTALL_DIR` set, or build from source.
+The tap points at the public releases; if a corporate proxy blocks GitHub downloads, use the [installer](/docs/how-to/install/) with `GLIDE_INSTALL_DIR` set, or build from source.
 
 ## `--safe` refused something
 

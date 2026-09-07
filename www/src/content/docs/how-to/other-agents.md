@@ -12,4 +12,4 @@ Paste it into whatever file your agent reads at the start of a session: `AGENTS.
 
 If the agent has a session-start hook of its own, point it at `glide prime` instead; the output is plain Markdown, and `--hook-json` wraps it in the envelope Claude Code, Codex, and Gemini CLI share.
 
-If the agent speaks MCP and has no shell, use the [MCP server](/docs/agents/mcp/).
+If the agent speaks MCP and has no shell, use the [MCP server](/docs/how-to/mcp/).

@@ -22,9 +22,9 @@ An MCP tool schema rides along on every request, so use it where there is no she
 
 | Agent | Command |
 | --- | --- |
-| [Claude Code](/docs/agents/claude-code/) | `glide setup claude [--global]` |
-| [Warp](/docs/agents/warp/) | `glide setup warp` |
-| [Codex, Cursor, Gemini CLI, anything with an instructions file](/docs/agents/others/) | `glide onboard` |
-| [Any MCP client](/docs/agents/mcp/) | `glide mcp serve` |
+| [Claude Code](/docs/how-to/claude-code/) | `glide setup claude [--global]` |
+| [Warp](/docs/how-to/warp/) | `glide setup warp` |
+| [Codex, Cursor, Gemini CLI, anything with an instructions file](/docs/how-to/other-agents/) | `glide onboard` |
+| [Any MCP client](/docs/how-to/mcp/) | `glide mcp serve` |
 
 The design of this page is borrowed from [beads](https://github.com/gastownhall/beads), whose `bd prime` and `bd setup` showed that a CLI plus a hook beats a tool schema for context cost.

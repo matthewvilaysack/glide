@@ -15,7 +15,7 @@ glide focus
 ```
 
 The last line prints `▶ no focus set` or today's focus.
-If your daily notes are not at `Daily Notes/YYYY-MM-DD.md`, set `daily_note_pattern` too; see [Config](/docs/config/).
+If your daily notes are not at `Daily Notes/YYYY-MM-DD.md`, set `daily_note_pattern` too; see [Config](/docs/reference/config/).
 
 ## 2. Give your agent the workflow
 
@@ -28,7 +28,7 @@ glide setup claude --global
 That installs a SessionStart hook that runs `glide prime --hook-json`, which puts today's focus and the six verbs into every session, and again after every compaction.
 Warp: `glide setup warp` prints the rule to paste.
 Anything else: `glide onboard` prints the paragraph for its instructions file.
-Details per agent are under [Agents](/docs/agents/overview/).
+Details per agent are under [Agents](/docs/explanation/agents/).
 
 ## 3. Keep it on screen
 
@@ -39,7 +39,7 @@ set -g status-right '#(glide focus 2>/dev/null) '
 set -g status-interval 15
 ```
 
-Without tmux, a prompt segment that runs `glide focus` does the same job; see [Status bar](/docs/usage/status-bar/).
+Without tmux, a prompt segment that runs `glide focus` does the same job; see [Status bar](/docs/how-to/status-bar/).
 
 ## Day to day
 

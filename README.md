@@ -51,7 +51,7 @@ From source: `cargo install --git https://github.com/matthewvilaysack/glide glid
    set -g status-right '#(glide focus 2>/dev/null) '
    ```
 
-The full walkthrough is in [`docs/attach-terminals.md`](docs/attach-terminals.md).
+The docs are at [tryglide.net/docs](https://tryglide.net/docs/): a quick start, a worked first day with an agent, one how-to per terminal and agent, and the reference for every verb and the daily note contract.
 
 ## Day to day
 

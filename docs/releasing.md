@@ -65,6 +65,17 @@ Once the tap exists.
 Every release rewrites `Formula/glide.rb` in the tap.
 `scripts/homebrew-formula.sh <version> <dir>` renders the same file locally from a release's checksums if a bump ever has to be done by hand.
 
+## The docs site
+
+`www/` is an Astro Starlight site, laid out on Diátaxis (tutorials, how-to guides, reference, explanation), served at https://tryglide.net/docs through a rewrite on the marketing site.
+It deploys as the Vercel project `glide-docs`:
+
+```sh
+cd www && npm install && npm run build && vercel --prod --yes
+```
+
+Deploy it whenever a page under `www/src/content/docs` changes; it is not wired to git yet.
+
 ## What CI checks on every pull request
 
 `.github/workflows/ci.yml` runs on Linux and macOS: formatting (`scripts/fmt.sh --check`), clippy with warnings as errors, the test suite, and a `--version` / `--help` smoke of the built binary.

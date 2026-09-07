@@ -10,7 +10,7 @@ description: What glide reads, writes, and never touches.
 
 ## Writes
 
-- Four sections of today's daily note, and only through the verbs on the [Focus](/docs/usage/focus/) page.
+- Four sections of today's daily note, and only through the verbs on the [Focus](/docs/reference/focus/) page.
 - `~/.glide/config.toml` when you run `glide config set`.
 - `.claude/settings.json` (or the global one) when you run `glide setup claude`, and only the one hook entry.
 - For the Teams tier: `.glide/glide.db` in the repo.

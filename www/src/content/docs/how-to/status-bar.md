@@ -33,8 +33,8 @@ style = "dim"
 
 ## Warp
 
-Warp shows the line through the tmux status bar, or through the agent's replies once the [rule](/docs/agents/warp/) is installed.
+Warp shows the line through the tmux status bar, or through the agent's replies once the [rule](/docs/how-to/warp/) is installed.
 
 ## The console
 
-Bare `glide` opens the block console with the strip pinned in its top bar; see [Console](/docs/usage/console/).
+Bare `glide` opens the block console with the strip pinned in its top bar; see [Console](/docs/reference/console/).

@@ -33,7 +33,7 @@ Environment overrides: `GLIDE_VAULT_PATH`, `GLIDE_VAULT_DAILY_NOTE_PATTERN`.
 
 ## `[graph]`, `[index]`, `[llm]`, `[permissions]`
 
-These belong to the [Teams tier](/docs/teams/onboarding/): the on-device SQLite graph of ownership and permissions, what the indexer reads, and which model answers questions.
+These belong to the [Teams tier](/docs/explanation/teams/): the on-device SQLite graph of ownership and permissions, what the indexer reads, and which model answers questions.
 `glide init` writes a starter file with every key and a comment on each.
 
 ## Output
