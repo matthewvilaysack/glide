@@ -89,6 +89,15 @@ pub enum Command {
     /// Serve glide's tools to a terminal agent over the Model Context Protocol.
     Mcp(McpCmd),
 
+    /// Print the workflow context an agent needs at session start (for hooks).
+    Prime(PrimeArgs),
+
+    /// Wire glide into an agent: `claude` installs a SessionStart hook, `warp` prints the rule.
+    Setup(SetupArgs),
+
+    /// Print the paragraph to paste into any agent's instructions file.
+    Onboard,
+
     /// Emit shell completions.
     Completion(CompletionArgs),
 }
@@ -113,6 +122,33 @@ pub enum FocusSub {
     Log { text: Vec<String> },
     /// Print today's note as Markdown.
     Today,
+}
+
+#[derive(Debug, Args)]
+pub struct PrimeArgs {
+    /// Wrap the output in the SessionStart hook JSON envelope (Claude Code, Codex, Gemini CLI).
+    #[arg(long)]
+    pub hook_json: bool,
+}
+
+#[derive(Debug, Args)]
+pub struct SetupArgs {
+    pub target: SetupTarget,
+    /// Claude: write ~/.claude/settings.json instead of the project's .claude/settings.json.
+    #[arg(long)]
+    pub global: bool,
+    /// Report whether the hook is installed, change nothing.
+    #[arg(long)]
+    pub check: bool,
+    /// Remove the hook.
+    #[arg(long)]
+    pub remove: bool,
+}
+
+#[derive(Debug, Clone, Copy, clap::ValueEnum)]
+pub enum SetupTarget {
+    Claude,
+    Warp,
 }
 
 #[derive(Debug, Args)]

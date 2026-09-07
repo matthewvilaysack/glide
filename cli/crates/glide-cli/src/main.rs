@@ -44,6 +44,12 @@ fn dispatch(cli: Cli) -> anyhow::Result<()> {
         Some(Command::Tools(args)) => commands::tools::run(&cli.globals, args),
         Some(Command::Focus(args)) => commands::focus::run(&cli.globals, args),
         Some(Command::Mcp(args)) => commands::mcp::run(&cli.globals, args),
+        Some(Command::Prime(args)) => commands::prime::run(&cli.globals, args),
+        Some(Command::Setup(args)) => commands::setup::run(&cli.globals, args),
+        Some(Command::Onboard) => {
+            println!("{}", commands::setup::onboard_text());
+            Ok(())
+        }
         Some(Command::Completion(args)) => commands::completion::run(args),
         None => {
             if let Some(prompt) = cli.prompt.clone() {

@@ -37,13 +37,13 @@ From source: `cargo install --git https://github.com/matthewvilaysack/glide glid
    glide focus
    ```
 
-2. Give your agent the tools. For Claude Code, add to `.mcp.json`:
+2. Give your agent the workflow. One command for Claude Code:
 
-   ```json
-   { "mcpServers": { "glide": { "command": "glide", "args": ["mcp", "serve"] } } }
+   ```sh
+   glide setup claude --global
    ```
 
-   Warp: Settings, AI, MCP servers, command `glide`, arguments `mcp serve`.
+   That installs a SessionStart hook running `glide prime --hook-json`, which puts today's focus and the six verbs into every session (and again after every compaction) for a few hundred tokens, no MCP schema overhead. `glide setup claude --check` and `--remove` do what they say. Warp: `glide setup warp` prints the rule to paste. Anything else: `glide onboard` prints the paragraph for its instructions file. The MCP server (`glide mcp serve`) is there for clients without a shell, Claude Desktop for one.
 
 3. Keep it on screen. In `~/.tmux.conf`:
 
@@ -62,6 +62,7 @@ glide focus capture idea for the demo   # into Notes
 glide focus log fixed the flaky build   # into Record, with a timestamp
 glide focus today                       # the whole note
 glide                                   # the block console, with the focus strip in its top bar
+glide prime                             # what an agent sees at session start
 ```
 
 Say the same things to your agent instead and it calls the same verbs.

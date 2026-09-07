@@ -38,6 +38,9 @@ cargo build --release
 | `glide friction digest [--since <duration>]` | Roll friction into a weekly digest |
 | `glide focus [set\|done\|capture\|log\|today]` | Keep today's priorities in view; edits the daily note in your vault |
 | `glide mcp serve` | Serve the focus verbs to a terminal agent over MCP (stdio) |
+| `glide prime [--hook-json]` | Session-start context for an agent: today's focus and the six verbs |
+| `glide setup claude\|warp [--global\|--check\|--remove]` | Install the SessionStart hook (Claude Code) or print the rule (Warp) |
+| `glide onboard` | The paragraph to paste into any agent's instructions file |
 | `glide config [get\|set\|list]` | Read/write the layered TOML |
 | `glide doctor` | Diagnostics |
 | `glide models` | List configured LLM providers |

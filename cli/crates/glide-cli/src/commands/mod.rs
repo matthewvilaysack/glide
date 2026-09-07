@@ -19,7 +19,9 @@ pub mod mcp;
 pub mod models;
 pub mod one_shot;
 pub mod plan;
+pub mod prime;
 pub mod request;
+pub mod setup;
 pub mod tools;
 pub mod who_owns;
 

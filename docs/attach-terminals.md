@@ -19,35 +19,24 @@ glide focus
 The last line should print `▶ no focus set` or today's focus.
 Any folder works; an Obsidian vault on iCloud is the case this was built for.
 
-## 2. Give the agent the tools
+## 2. Give the agent the workflow
 
-Claude Code, per project or globally in `~/.claude/.mcp.json`:
+Claude Code, one command:
 
-```json
-{
-  "mcpServers": {
-    "glide": { "command": "glide", "args": ["mcp", "serve"] }
-  }
-}
+```sh
+glide setup claude --global     # or without --global, for this project only
+glide setup claude --check
 ```
 
-Warp: Settings, AI, MCP servers, add a server with command `glide` and arguments `mcp serve`.
-Any other MCP client takes the same command.
+It adds a SessionStart hook that runs `glide prime --hook-json`, so every session (and every compaction, since SessionStart fires again) opens with today's focus, the focus list, and the six verbs in a few hundred tokens.
+That is the whole integration; the agent uses the CLI directly from there.
+`glide setup claude --remove` takes it out.
 
-Two Claude Code hooks make the priorities show up without asking.
-Add to `~/.claude/settings.json`:
+Warp: `glide setup warp` prints the rule to paste under Settings, AI, Rules, plus the MCP entry if you want the verbs as tools.
+Any other agent: `glide onboard` prints the paragraph for its instructions file.
 
-```json
-{
-  "hooks": {
-    "SessionStart": [{ "hooks": [{ "type": "command", "command": "glide focus --quiet" }] }],
-    "Stop": [{ "hooks": [{ "type": "command", "command": "glide focus --quiet" }] }]
-  }
-}
-```
-
-The start hook puts today's focus line into the session context; the stop hook prints it again when the agent finishes, so the priority is the last thing on screen.
-The MCP server's own instructions ask the agent to log what it did after each task, so the Record section fills in behind you.
+The MCP server is still there for clients that have no shell, Claude Desktop for one: add `{ "glide": { "command": "glide", "args": ["mcp", "serve"] } }` under `mcpServers`.
+Prefer the hook wherever there is a shell; an MCP tool schema rides along on every request, `glide prime` runs once.
 
 ## 3. Keep it on screen
 
