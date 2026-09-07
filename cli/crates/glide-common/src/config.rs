@@ -28,6 +28,14 @@ pub struct VaultConfig {
     pub path: String,
     /// Relative path of one day's note, with `{date}` for `YYYY-MM-DD`.
     pub daily_note_pattern: String,
+    /// The `##` heading that holds the day's priorities.
+    pub focus_heading: String,
+    /// The `##` heading that holds checkbox tasks.
+    pub tasks_heading: String,
+    /// The `##` heading `log` appends to.
+    pub record_heading: String,
+    /// The `##` heading `capture` appends to.
+    pub notes_heading: String,
 }
 
 impl Default for VaultConfig {
@@ -35,6 +43,10 @@ impl Default for VaultConfig {
         Self {
             path: String::new(),
             daily_note_pattern: "Daily Notes/{date}.md".into(),
+            focus_heading: "Focus".into(),
+            tasks_heading: "Tasks".into(),
+            record_heading: "Record".into(),
+            notes_heading: "Notes".into(),
         }
     }
 }

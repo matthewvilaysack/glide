@@ -22,6 +22,9 @@ If it exists, everything outside those four sections is left byte for byte, incl
 
 ## Four sections
 
+The heading names are defaults; `[vault] focus_heading`, `tasks_heading`, `record_heading`, `notes_heading` rename them.
+A note that lacks the focus heading gets it appended on the first `focus set`.
+
 Glide reads and edits exactly four top-level `##` headings in today's note.
 A heading it cannot find is appended at the end of the file the first time something is written to it.
 

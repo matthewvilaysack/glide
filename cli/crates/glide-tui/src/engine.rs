@@ -305,10 +305,15 @@ impl Engine for GlideEngine {
 
 impl GlideEngine {
     fn vault(&self) -> Result<glide_vault::Vault, glide_vault::VaultError> {
-        glide_vault::Vault::new(
-            &self.ctx.config.vault.path,
-            &self.ctx.config.vault.daily_note_pattern,
-        )
+        let v = &self.ctx.config.vault;
+        glide_vault::Vault::new(&v.path, &v.daily_note_pattern).map(|vault| {
+            vault.with_sections(glide_vault::Sections {
+                focus: v.focus_heading.clone(),
+                tasks: v.tasks_heading.clone(),
+                record: v.record_heading.clone(),
+                notes: v.notes_heading.clone(),
+            })
+        })
     }
 
     /// The focus strip for the top bar; `None` when no vault is configured,

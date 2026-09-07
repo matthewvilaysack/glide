@@ -39,10 +39,17 @@ pub fn open_vault() -> Result<glide_vault::Vault> {
     let cwd = std::env::current_dir()?;
     let repo_root = find_repo_root(&cwd);
     let config = Config::load(repo_root.as_deref())?;
-    Ok(glide_vault::Vault::new(
-        &config.vault.path,
-        &config.vault.daily_note_pattern,
-    )?)
+    let v = &config.vault;
+    Ok(
+        glide_vault::Vault::new(&v.path, &v.daily_note_pattern)?.with_sections(
+            glide_vault::Sections {
+                focus: v.focus_heading.clone(),
+                tasks: v.tasks_heading.clone(),
+                record: v.record_heading.clone(),
+                notes: v.notes_heading.clone(),
+            },
+        ),
+    )
 }
 
 impl CmdCtx {

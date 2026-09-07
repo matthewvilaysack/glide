@@ -16,6 +16,8 @@ If it exists, everything outside those four sections is left byte for byte: fron
 
 ## Four sections
 
+The heading names below are the defaults; each is configurable (`focus_heading` and friends in [Config](/docs/reference/config/)) so a template that calls its list `Checklist` works unchanged.
+
 | Section | What it holds | How glide reads it | How glide writes it |
 | --- | --- | --- | --- |
 | `## Focus` | The day's priorities, in order | Every bullet; `- [ ]`, `- [x]`, and plain `- ` all count | `set` tags one bullet `#now`; `done` checks it off |

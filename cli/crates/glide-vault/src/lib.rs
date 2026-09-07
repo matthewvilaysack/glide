@@ -30,7 +30,33 @@ pub enum VaultError {
 pub type Result<T> = std::result::Result<T, VaultError>;
 
 const NOW_TAG: &str = "#now";
-const SECTIONS: [&str; 4] = ["Focus", "Tasks", "Record", "Notes"];
+
+/// The four headings glide touches. Configurable, because daily-note
+/// templates differ: one person's Focus list is another's Checklist.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Sections {
+    pub focus: String,
+    pub tasks: String,
+    pub record: String,
+    pub notes: String,
+}
+
+impl Default for Sections {
+    fn default() -> Self {
+        Sections {
+            focus: "Focus".into(),
+            tasks: "Tasks".into(),
+            record: "Record".into(),
+            notes: "Notes".into(),
+        }
+    }
+}
+
+impl Sections {
+    fn all(&self) -> [&str; 4] {
+        [&self.focus, &self.tasks, &self.record, &self.notes]
+    }
+}
 
 /// Where the notes live and how a day maps to a file.
 #[derive(Debug, Clone)]
@@ -38,6 +64,7 @@ pub struct Vault {
     pub root: PathBuf,
     /// Relative pattern with `{date}` for `YYYY-MM-DD`, e.g. `Daily Notes/{date}.md`.
     pub daily_note_pattern: String,
+    pub sections: Sections,
 }
 
 impl Vault {
@@ -52,7 +79,13 @@ impl Vault {
         Ok(Vault {
             root,
             daily_note_pattern: daily_note_pattern.to_string(),
+            sections: Sections::default(),
         })
+    }
+
+    pub fn with_sections(mut self, sections: Sections) -> Self {
+        self.sections = sections;
+        self
     }
 
     pub fn today() -> NaiveDate {
@@ -72,9 +105,14 @@ impl Vault {
         let raw = if path.exists() {
             std::fs::read_to_string(&path)?
         } else {
-            skeleton(date)
+            skeleton(date, &self.sections)
         };
-        Ok(Daily { path, date, raw })
+        Ok(Daily {
+            path,
+            date,
+            raw,
+            sections: self.sections.clone(),
+        })
     }
 }
 
@@ -87,9 +125,9 @@ fn expand_home(p: &str) -> PathBuf {
     PathBuf::from(p)
 }
 
-fn skeleton(date: NaiveDate) -> String {
+fn skeleton(date: NaiveDate, sections: &Sections) -> String {
     let mut s = format!("# {}\n", date.format("%Y-%m-%d"));
-    for name in SECTIONS {
+    for name in sections.all() {
         s.push_str(&format!("\n## {name}\n"));
     }
     s
@@ -146,6 +184,7 @@ pub struct Daily {
     pub path: PathBuf,
     pub date: NaiveDate,
     pub raw: String,
+    pub sections: Sections,
 }
 
 impl Daily {
@@ -154,6 +193,7 @@ impl Daily {
             path: PathBuf::new(),
             date,
             raw: raw.to_string(),
+            sections: Sections::default(),
         }
     }
 
@@ -185,14 +225,14 @@ impl Daily {
     }
 
     pub fn focus_items(&self) -> Vec<Item> {
-        self.section_lines("Focus")
+        self.section_lines(&self.sections.focus.clone())
             .iter()
             .filter_map(|l| parse_item(l))
             .collect()
     }
 
     pub fn task_items(&self) -> Vec<Item> {
-        self.section_lines("Tasks")
+        self.section_lines(&self.sections.tasks.clone())
             .iter()
             .filter_map(|l| parse_item(l))
             .filter(|i| !i.text.is_empty())
@@ -203,7 +243,9 @@ impl Daily {
     /// case-insensitively by substring, else adds a new one. Returns the text
     /// of the bullet that now carries the tag.
     pub fn set_now(&mut self, text: &str) -> String {
-        let (start, end) = self.section_span("Focus");
+        let focus = self.sections.focus.clone();
+        self.ensure_section(&focus);
+        let (start, end) = self.section_span(&focus);
         let mut lines: Vec<String> = self.raw.lines().map(String::from).collect();
         for l in lines[start..end].iter_mut() {
             *l = strip_now(l);
@@ -233,8 +275,8 @@ impl Daily {
     pub fn mark_done(&mut self, text: &str) -> Result<String> {
         let needle = text.trim().to_lowercase();
         let mut lines: Vec<String> = self.raw.lines().map(String::from).collect();
-        for name in ["Focus", "Tasks"] {
-            let (start, end) = self.section_span(name);
+        for name in [self.sections.focus.clone(), self.sections.tasks.clone()] {
+            let (start, end) = self.section_span(&name);
             if let Some(i) = (start..end).find(|&i| {
                 parse_item(&lines[i])
                     .map(|it| !it.done && it.text.to_lowercase().contains(&needle))
@@ -251,6 +293,22 @@ impl Daily {
             }
         }
         Err(VaultError::NoMatch(text.to_string()))
+    }
+
+    /// Add `## section` at the end of the note if it is missing, so a note made
+    /// by some other template (one without a Focus heading, say) still takes
+    /// the verbs without a bullet landing on line one.
+    fn ensure_section(&mut self, section: &str) {
+        let lines: Vec<String> = self.raw.lines().map(String::from).collect();
+        if self.find_section(&lines, section).is_some() {
+            return;
+        }
+        let mut out = self.raw.trim_end_matches('\n').to_string();
+        if !out.is_empty() {
+            out.push_str("\n\n");
+        }
+        out.push_str(&format!("## {section}\n"));
+        self.raw = out;
     }
 
     /// Append a bullet to a section (creating the section if the note lacks it).
@@ -272,12 +330,14 @@ impl Daily {
     }
 
     pub fn capture(&mut self, text: &str) {
-        self.append("Notes", text);
+        let notes = self.sections.notes.clone();
+        self.append(&notes, text);
     }
 
     pub fn log(&mut self, text: &str) {
         let stamp = Local::now().format("%H:%M");
-        self.append("Record", &format!("{stamp} {}", text.trim()));
+        let record = self.sections.record.clone();
+        self.append(&record, &format!("{stamp} {}", text.trim()));
     }
 
     pub fn save(&self) -> Result<()> {
@@ -449,9 +509,44 @@ mod tests {
     }
 
     #[test]
+    fn set_now_creates_focus_when_a_template_note_lacks_it() {
+        let mut n = Daily::parse(
+            d(),
+            "---\ncreated: x\n---\n# 2026-09-07\n\n## Baseline\n- [ ] run\n",
+        );
+        assert_eq!(n.set_now("write the roadmap"), "write the roadmap");
+        assert!(
+            n.raw.starts_with("---\ncreated: x\n---\n"),
+            "frontmatter must stay first"
+        );
+        assert!(n
+            .raw
+            .ends_with("## Baseline\n- [ ] run\n\n## Focus\n- [ ] write the roadmap #now\n"));
+        assert_eq!(n.snapshot().now.as_deref(), Some("write the roadmap"));
+        assert_eq!(n.mark_done("roadmap").unwrap(), "write the roadmap");
+    }
+
+    #[test]
+    fn configured_headings_are_used_everywhere() {
+        let mut n = Daily::parse(
+            d(),
+            "# day\n\n## Checklist\n- [ ] apply to a16z\n- [ ] email Hari\n\n## Record\n",
+        );
+        n.sections = Sections {
+            focus: "Checklist".into(),
+            ..Sections::default()
+        };
+        assert_eq!(n.snapshot().focus.len(), 2);
+        assert_eq!(n.set_now("a16z"), "apply to a16z");
+        assert!(n.raw.contains("- [ ] apply to a16z #now\n- [ ] email Hari"));
+        assert_eq!(n.mark_done("hari").unwrap(), "email Hari");
+        assert!(!n.raw.contains("## Focus"));
+    }
+
+    #[test]
     fn skeleton_has_the_four_sections() {
-        let s = skeleton(d());
-        for name in SECTIONS {
+        let s = skeleton(d(), &Sections::default());
+        for name in Sections::default().all() {
             assert!(s.contains(&format!("## {name}")));
         }
         let n = Daily::parse(d(), &s);

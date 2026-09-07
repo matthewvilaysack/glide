@@ -29,6 +29,13 @@ daily_note_pattern = "Daily Notes/{date}.md"
 | `path` | empty | Folder of Markdown notes. `~` is expanded. Empty means "not set up" and every focus verb says so. |
 | `daily_note_pattern` | `Daily Notes/{date}.md` | Relative path of one day's note; `{date}` becomes `YYYY-MM-DD`. |
 
+| `focus_heading` | `Focus` | The `##` heading that holds the day's priorities. Set it to whatever your template calls that list (`Checklist`, `Today`). |
+| `tasks_heading` | `Tasks` | The `##` heading with checkbox tasks. |
+| `record_heading` | `Record` | Where `log` appends. |
+| `notes_heading` | `Notes` | Where `capture` appends. |
+
+If today's note lacks the focus heading, the first `focus set` appends that section at the end of the file rather than guessing.
+
 Environment overrides: `GLIDE_VAULT_PATH`, `GLIDE_VAULT_DAILY_NOTE_PATTERN`.
 
 ## `[graph]`, `[index]`, `[llm]`, `[permissions]`
