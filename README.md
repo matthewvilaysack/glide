@@ -12,6 +12,8 @@ The agent you run in the terminal (Claude Code, Warp AI, any MCP client) gets th
 
 That line is `glide focus`. It goes in your tmux status bar or your prompt, and it changes as you and your agent work.
 
+Try it without installing anything at [tryglide.net/try](https://tryglide.net/try): the same engine, running in your browser.
+
 ![glide in a terminal: focus set, the agent logs, done, the note, and what an agent sees at session start](demo/demo.gif)
 
 The recording is scripted (`demo/glide.tape`, rendered with [VHS](https://github.com/charmbracelet/vhs)) against a throwaway vault, so it is the real binary every time.

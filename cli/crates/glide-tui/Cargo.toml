@@ -10,6 +10,6 @@ authors.workspace = true
 glide-common = { workspace = true }
 glide-graph = { workspace = true }
 glide-core = { workspace = true }
-glide-vault = { workspace = true }
+glide-vault = { workspace = true, features = ["home"] }
 anyhow = { workspace = true }
 ratatui = { workspace = true }

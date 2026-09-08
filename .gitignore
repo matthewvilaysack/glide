@@ -3,3 +3,4 @@
 .glide/
 .lavish/
 .DS_Store
+dist/
