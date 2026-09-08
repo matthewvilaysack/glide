@@ -5,7 +5,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/../cli"
 mode=("${@}")
-for pkg in glide-common glide-graph glide-core glide-tui glide-vault glide-cli; do
+for pkg in glide-common glide-graph glide-core glide-tui glide-vault glide-play glide-cli; do
   if grep -q "\"crates/$pkg\"" Cargo.toml; then
     cargo fmt -p "$pkg" -- "${mode[@]}"
   fi

@@ -21,7 +21,7 @@ glide-graph = { workspace = true }
 glide-core = { workspace = true }
 glide-llm = { workspace = true }
 glide-tui = { workspace = true, optional = true }
-glide-vault = { workspace = true }
+glide-vault = { workspace = true, features = ["home"] }
 rmcp = { workspace = true }
 schemars = { workspace = true }
 tokio = { workspace = true }
@@ -37,3 +37,7 @@ tracing-subscriber = { workspace = true }
 is-terminal = { workspace = true }
 owo-colors = { workspace = true }
 directories = { workspace = true }
+
+[dev-dependencies]
+glide-play = { workspace = true }
+tempfile = "3"

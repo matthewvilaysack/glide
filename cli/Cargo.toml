@@ -7,6 +7,7 @@ members = [
     "crates/glide-llm",
     "crates/glide-tui",
     "crates/glide-vault",
+    "crates/glide-play",
     "crates/glide-cli",
 ]
 
@@ -24,7 +25,8 @@ glide-graph  = { path = "crates/glide-graph" }
 glide-core   = { path = "crates/glide-core" }
 glide-llm    = { path = "crates/glide-llm", default-features = false }
 glide-tui    = { path = "crates/glide-tui" }
-glide-vault  = { path = "crates/glide-vault" }
+glide-vault  = { path = "crates/glide-vault", default-features = false }
+glide-play = { path = "crates/glide-play" }
 
 anyhow         = "1"
 thiserror      = "1"
@@ -49,8 +51,13 @@ ratatui        = "0.29"
 rmcp           = { version = "3.2", default-features = false, features = ["server", "macros", "transport-io", "schemars"] }
 schemars       = "1"
 tokio          = { version = "1", features = ["rt-multi-thread", "macros", "io-std"] }
+wasm-bindgen = "=0.2.128"
 
 [profile.release]
 lto = "thin"
 codegen-units = 1
 strip = "symbols"
+
+# The browser engine is downloaded on every page view; optimise for size.
+[profile.release.package.glide-play]
+opt-level = "z"

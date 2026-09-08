@@ -102,7 +102,8 @@ impl Vault {
     /// Load the note for `date`, or an empty skeleton if it does not exist yet.
     pub fn load(&self, date: NaiveDate) -> Result<Daily> {
         let path = self.note_path(date);
-        let raw = if path.exists() {
+        let exists = path.exists();
+        let raw = if exists {
             std::fs::read_to_string(&path)?
         } else {
             skeleton(date, &self.sections)
@@ -112,11 +113,13 @@ impl Vault {
             date,
             raw,
             sections: self.sections.clone(),
+            exists,
         })
     }
 }
 
 fn expand_home(p: &str) -> PathBuf {
+    #[cfg(feature = "home")]
     if let Some(rest) = p.strip_prefix("~/") {
         if let Some(base) = directories::BaseDirs::new() {
             return base.home_dir().join(rest);
@@ -177,6 +180,40 @@ impl Snapshot {
     }
 }
 
+/// The text an agent needs at the start of a session, and nothing else. Shared
+/// by `glide prime` and the browser playground so both show the same words.
+pub fn prime_text(snap: Option<&Snapshot>) -> String {
+    let mut s = String::new();
+    s.push_str("## glide: this person's priorities\n\n");
+    match snap {
+        Some(snap) => {
+            s.push_str(&format!("Today ({}): {}\n", snap.date, snap.line()));
+            if let Some(now) = &snap.now {
+                s.push_str(&format!("Current focus: {now}\n"));
+            }
+            if !snap.focus.is_empty() {
+                s.push_str("Focus list:\n");
+                for item in &snap.focus {
+                    let mark = if item.done { "[x]" } else { "[ ]" };
+                    let now = if item.now { " (now)" } else { "" };
+                    s.push_str(&format!("- {mark} {}{now}\n", item.text));
+                }
+            }
+            if !snap.exists {
+                s.push_str("(No note for today yet; the first write creates it.)\n");
+            }
+        }
+        None => s.push_str("Today: unknown, the vault is not set up.\n"),
+    }
+    s.push_str(
+        "\nWorkflow: mention the current focus in one line at the start. When the person says what they are on, run `glide focus set <text>`. \
+         When something finishes, `glide focus done <text>`. After every task you complete, `glide focus log <one or two sentences>`, without being asked. \
+         Anything they say to remember: `glide focus capture <text>`. Read the whole note with `glide focus today`. Add `--json` for structured output. \
+         Never edit the daily note by hand; these verbs are the only writers.\n",
+    );
+    s
+}
+
 /// A loaded daily note. Edits work on the raw text so everything outside the
 /// four sections survives byte for byte.
 #[derive(Debug, Clone)]
@@ -185,6 +222,9 @@ pub struct Daily {
     pub date: NaiveDate,
     pub raw: String,
     pub sections: Sections,
+    /// Whether the note was read from disk (or handed over as text) rather
+    /// than made up from the skeleton. Drives the "no note yet" hints.
+    pub exists: bool,
 }
 
 impl Daily {
@@ -194,6 +234,7 @@ impl Daily {
             date,
             raw: raw.to_string(),
             sections: Sections::default(),
+            exists: true,
         }
     }
 
@@ -203,7 +244,7 @@ impl Daily {
         Snapshot {
             date: self.date.format("%Y-%m-%d").to_string(),
             path: self.path.display().to_string(),
-            exists: self.path.exists(),
+            exists: self.exists,
             now: focus
                 .iter()
                 .find(|i| i.now && !i.done)
@@ -334,17 +375,24 @@ impl Daily {
         self.append(&notes, text);
     }
 
-    pub fn log(&mut self, text: &str) {
-        let stamp = Local::now().format("%H:%M");
+    /// Append `- HH:MM text` to Record using the given clock reading. The
+    /// browser build has no clock and calls this directly.
+    pub fn log_at(&mut self, stamp: &str, text: &str) {
         let record = self.sections.record.clone();
         self.append(&record, &format!("{stamp} {}", text.trim()));
     }
 
-    pub fn save(&self) -> Result<()> {
+    pub fn log(&mut self, text: &str) {
+        let stamp = Local::now().format("%H:%M").to_string();
+        self.log_at(&stamp, text);
+    }
+
+    pub fn save(&mut self) -> Result<()> {
         if let Some(parent) = self.path.parent() {
             std::fs::create_dir_all(parent)?;
         }
         std::fs::write(&self.path, &self.raw)?;
+        self.exists = true;
         Ok(())
     }
 
@@ -571,10 +619,48 @@ mod tests {
         let v = Vault::new(dir.path().to_str().unwrap(), "{date}.md").unwrap();
         let mut n = v.load(d()).unwrap();
         assert!(!n.snapshot().exists);
+        assert!(prime_text(Some(&n.snapshot())).contains("No note for today yet"));
         n.set_now("first thing");
         n.save().unwrap();
+        assert!(n.snapshot().exists);
         let again = v.load(d()).unwrap();
         assert!(again.snapshot().exists);
         assert_eq!(again.snapshot().now.as_deref(), Some("first thing"));
+    }
+
+    #[test]
+    fn a_parsed_note_reports_as_existing() {
+        let d = Daily::parse(
+            NaiveDate::from_ymd_opt(2026, 9, 7).unwrap(),
+            "# 2026-09-07\n\n## Focus\n",
+        );
+        assert!(d.snapshot().exists);
+    }
+
+    #[test]
+    fn log_at_uses_the_given_stamp() {
+        let mut d = Daily::parse(
+            NaiveDate::from_ymd_opt(2026, 9, 7).unwrap(),
+            "# 2026-09-07\n\n## Record\n\n## Notes\n",
+        );
+        d.log_at("10:42", "fixed the flaky build");
+        assert!(d.raw.contains("- 10:42 fixed the flaky build\n"));
+        assert_eq!(d.snapshot().record_entries, 1);
+    }
+
+    #[test]
+    fn prime_text_names_the_current_focus_and_the_workflow() {
+        let mut d = Daily::parse(
+            NaiveDate::from_ymd_opt(2026, 9, 7).unwrap(),
+            "# 2026-09-07\n\n## Focus\n- [ ] write the roadmap\n\n## Tasks\n\n## Record\n\n## Notes\n",
+        );
+        d.set_now("roadmap");
+        let t = prime_text(Some(&d.snapshot()));
+        assert!(t.starts_with("## glide: this person's priorities\n\nToday (2026-09-07): "));
+        assert!(t.contains("Current focus: write the roadmap\n"));
+        assert!(t.contains("- [ ] write the roadmap (now)\n"));
+        assert!(!t.contains("No note for today yet"));
+        assert!(t.contains("Workflow: mention the current focus"));
+        assert!(prime_text(None).contains("Today: unknown, the vault is not set up."));
     }
 }

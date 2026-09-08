@@ -1,0 +1,16 @@
+[package]
+name = "glide-play"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "glide's daily-note engine, compiled for the browser playground"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+glide-vault = { workspace = true, default-features = false }
+chrono = { workspace = true }
+wasm-bindgen = { workspace = true }

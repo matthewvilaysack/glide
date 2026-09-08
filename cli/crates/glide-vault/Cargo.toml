@@ -6,11 +6,16 @@ license.workspace = true
 repository.workspace = true
 authors.workspace = true
 
+[features]
+default = ["home"]
+# `~/` expansion in vault paths. Off in the browser build, which has no home.
+home = ["dep:directories"]
+
 [dependencies]
 serde = { workspace = true }
 chrono = { workspace = true }
 thiserror = { workspace = true }
-directories = { workspace = true }
+directories = { workspace = true, optional = true }
 
 [dev-dependencies]
 tempfile = "3"

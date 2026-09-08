@@ -3,10 +3,10 @@ name: CI
 on:
   push:
     branches: [main, "release/**"]
-    paths: ["cli/**", ".github/workflows/ci.yml"]
+    paths: ["cli/**", "scripts/**", ".github/workflows/ci.yml"]
   pull_request:
     branches: [main, "release/**"]
-    paths: ["cli/**", ".github/workflows/ci.yml"]
+    paths: ["cli/**", "scripts/**", ".github/workflows/ci.yml"]
 
 permissions:
   contents: read
@@ -43,3 +43,23 @@ jobs:
           cargo build -p glide-cli
           ./target/debug/glide --version
           ./target/debug/glide --help > /dev/null
+
+  play:
+    name: browser engine builds under budget
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: cli
+          cache-all-crates: true
+      - run: cargo install wasm-bindgen-cli --version 0.2.128 --locked
+      - run: ../scripts/build-play.sh
+      - uses: actions/upload-artifact@v5
+        with:
+          name: glide-play
+          path: dist/play
+          if-no-files-found: error
