@@ -110,6 +110,10 @@ pub enum Command {
 
     /// A named set of work that outlives today. The day draws from it.
     Sprint(SprintCmd),
+    /// Record what has been settled, so nothing settled gets proposed again.
+    Decide(DecideArgs),
+    /// Everything settled so far.
+    Decisions,
     /// Emit shell completions.
     Completion(CompletionArgs),
 }
@@ -138,6 +142,15 @@ pub enum FocusSub {
     List,
     /// Remove today's unfinished items. Reports without --confirm.
     Clear(ClearArgs),
+}
+
+#[derive(Debug, Args)]
+pub struct DecideArgs {
+    /// The decision, in the words you would say it.
+    pub text: Vec<String>,
+    /// Record something ruled OUT rather than chosen.
+    #[arg(long)]
+    pub against: bool,
 }
 
 #[derive(Debug, Args)]

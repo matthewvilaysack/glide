@@ -76,6 +76,23 @@ glide prime                             # what an agent sees at session start
 Finished items stay, because they are the day's record of what happened and the thing being cleared is what did not.
 A bullet with no checkbox stays too: that is prose you wrote in a list rather than a task you left open.
 
+### What is already settled
+
+The expensive thing an agent does is propose something you ruled out last week, hear no, and pick again.
+That is turns, and a turn re-reads the whole conversation.
+
+```sh
+glide decide postgres over sqlite, the replication story matters
+glide decide --against mongo, schema churn already bit us
+glide decisions                         # everything settled so far
+```
+
+Both kinds ride along in `glide prime`, so a session opens already knowing them.
+One decision costs about twenty tokens to carry and removes the turns that would have re-litigated it.
+
+Every other tool in this category injects what happened: session memory, compressed command output, retrieved facts.
+None of them inject what you decided, because none of them have a place where you write a decision down.
+
 ### Work that outlives today
 
 The daily note is thrown away, which is what makes it useful, and it is also why the week's work needs somewhere else to sit.

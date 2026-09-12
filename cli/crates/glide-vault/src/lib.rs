@@ -8,6 +8,7 @@
 //! - `## Record`: what actually happened, appended as `- HH:MM text`.
 //! - `## Notes`: quick captures, appended as `- text`.
 
+pub mod decide;
 pub mod sprint;
 
 use std::path::PathBuf;
@@ -185,6 +186,16 @@ impl Snapshot {
 /// The text an agent needs at the start of a session, and nothing else. Shared
 /// by `glide prime` and the browser playground so both show the same words.
 pub fn prime_text(snap: Option<&Snapshot>) -> String {
+    prime_text_with(snap, &[])
+}
+
+/// The same, plus what has already been settled.
+///
+/// Decisions go LAST, immediately before the workflow instructions, because a fact
+/// placed mid-context is likelier to be missed than one at either end and the
+/// rejections are the half that saves turns. Capped, because the value is in the
+/// agent reading them, and a list nobody finishes is a list nobody reads.
+pub fn prime_text_with(snap: Option<&Snapshot>, decisions: &[&decide::Decision]) -> String {
     let mut s = String::new();
     s.push_str("## glide: this person's priorities\n\n");
     match snap {
@@ -207,10 +218,17 @@ pub fn prime_text(snap: Option<&Snapshot>) -> String {
         }
         None => s.push_str("Today: unknown, the vault is not set up.\n"),
     }
+    if !decisions.is_empty() {
+        s.push_str("\nAlready settled, do not propose otherwise without saying why:\n");
+        for d in decisions {
+            s.push_str(&format!("- {}\n", d.line()));
+        }
+    }
     s.push_str(
         "\nWorkflow: mention the current focus in one line at the start. When the person says what they are on, run `glide focus set <text>`. \
          When something finishes, `glide focus done <text>`. After every task you complete, `glide focus log <one or two sentences>`, without being asked. \
-         Anything they say to remember: `glide focus capture <text>`. Read the whole note with `glide focus today`. Add `--json` for structured output. \
+         Anything they say to remember: `glide focus capture <text>`. \
+         When they settle a question, `glide decide <text>`, and when they rule something out, `glide decide --against <text>`. Read the whole note with `glide focus today`. Add `--json` for structured output. \
          Never edit the daily note by hand; these verbs are the only writers.\n",
     );
     s
@@ -773,5 +791,34 @@ mod tests {
         assert!(!t.contains("No note for today yet"));
         assert!(t.contains("Workflow: mention the current focus"));
         assert!(prime_text(None).contains("Today: unknown, the vault is not set up."));
+    }
+}
+
+#[cfg(test)]
+mod prime_decision_tests {
+    use super::*;
+
+    #[test]
+    fn prime_carries_what_was_ruled_out() {
+        // The whole point. An agent that does not know a thing was rejected proposes
+        // it again, and the cost of that is turns, not the sentence.
+        let d = decide::parse("- 2026-09-02 ruled out: mongo, schema churn bit us\n");
+        let refs: Vec<&decide::Decision> = d.iter().collect();
+        let text = prime_text_with(None, &refs);
+        assert!(text.contains("ruled out: mongo"));
+        assert!(text.contains("do not propose otherwise"));
+    }
+
+    #[test]
+    fn decisions_sit_after_the_focus_and_before_the_workflow() {
+        let d = decide::parse("- 2026-09-02 decided: postgres\n");
+        let refs: Vec<&decide::Decision> = d.iter().collect();
+        let t = prime_text_with(None, &refs);
+        assert!(t.find("decided: postgres").unwrap() < t.find("Workflow:").unwrap());
+    }
+
+    #[test]
+    fn nothing_is_added_when_nothing_is_settled() {
+        assert!(!prime_text_with(None, &[]).contains("Already settled"));
     }
 }

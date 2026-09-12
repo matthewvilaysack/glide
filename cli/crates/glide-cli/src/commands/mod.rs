@@ -10,6 +10,7 @@ pub mod completion;
 pub mod config;
 #[cfg(feature = "console")]
 pub mod console;
+pub mod decide;
 pub mod doctor;
 pub mod focus;
 pub mod friction;
