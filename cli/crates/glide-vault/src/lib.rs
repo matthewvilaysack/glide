@@ -8,6 +8,8 @@
 //! - `## Record`: what actually happened, appended as `- HH:MM text`.
 //! - `## Notes`: quick captures, appended as `- text`.
 
+pub mod sprint;
+
 use std::path::PathBuf;
 
 use chrono::{Local, NaiveDate};
@@ -280,6 +282,61 @@ impl Daily {
             .collect()
     }
 
+    /// Every open item in Focus and Tasks, in the order they appear.
+    ///
+    /// The preview `clear` prints before it is allowed to remove anything, and the
+    /// same list the removal walks, so what a person is shown and what happens to
+    /// their note cannot drift apart.
+    pub fn open_items(&self) -> Vec<String> {
+        let mut out = Vec::new();
+        for section in [self.sections.focus.clone(), self.sections.tasks.clone()] {
+            for line in self.section_lines(&section) {
+                if let Some(item) = parse_item(&line) {
+                    if !item.done && !item.text.is_empty() && is_checkbox(&line) {
+                        out.push(item.text);
+                    }
+                }
+            }
+        }
+        out
+    }
+
+    /// Drop the open items from Focus and Tasks, keeping everything else.
+    ///
+    /// Done bullets stay, because they are the day's record of what happened and the
+    /// thing being cleared is what did not. A bullet with no checkbox stays too: it
+    /// is prose someone wrote in a list rather than a task they left open, and
+    /// deleting it would take writing nobody asked to remove.
+    ///
+    /// Returns what it removed, so the caller can say so rather than reporting a
+    /// count the person has to trust.
+    pub fn clear_open(&mut self) -> Vec<String> {
+        let removed = self.open_items();
+        if removed.is_empty() {
+            return removed;
+        }
+        for section in [self.sections.focus.clone(), self.sections.tasks.clone()] {
+            let (start, end) = self.section_span(&section);
+            if start == end {
+                continue;
+            }
+            let lines: Vec<String> = self.raw.lines().map(String::from).collect();
+            let kept: Vec<String> = lines[start..end]
+                .iter()
+                .filter(|l| match parse_item(l) {
+                    Some(item) => item.done || item.text.is_empty() || !is_checkbox(l),
+                    None => true,
+                })
+                .cloned()
+                .collect();
+            let mut out = lines[..start].to_vec();
+            out.extend(kept);
+            out.extend_from_slice(&lines[end..]);
+            self.raw = format!("{}\n", out.join("\n"));
+        }
+        removed
+    }
+
     /// Make `text` the current focus. Matches an existing Focus bullet
     /// case-insensitively by substring, else adds a new one. Returns the text
     /// of the bullet that now carries the tag.
@@ -439,6 +496,16 @@ fn join(lines: Vec<String>) -> String {
     s
 }
 
+/// Whether a bullet carries a checkbox, which is what separates a task from prose.
+fn is_checkbox(l: &str) -> bool {
+    let t = l.trim_start();
+    let body = t.strip_prefix("- ").or_else(|| t.strip_prefix("* "));
+    match body {
+        Some(b) => b.starts_with("[ ] ") || b.starts_with("[x] ") || b.starts_with("[X] "),
+        None => false,
+    }
+}
+
 fn is_bullet(l: &str) -> bool {
     let t = l.trim_start();
     t.starts_with("- ") || t.starts_with("* ")
@@ -479,6 +546,50 @@ mod tests {
     }
 
     const NOTE: &str = "---\ncreated: x\n---\n# 2026-09-06\n\n## Focus\n- [ ] ship portal tests\n- [x] clock in\n- write roadmap\n\n## Tasks\n\n### Health\n- [ ] run\n- [x] stretch\n\n### Logistics\n- [ ] renew parking\n\n## Record\nWritten at the end of the day.\n- 09:00 stood up\n\n## Notes\n\n## Thoughts\nkeep this\n";
+
+    #[test]
+    fn clear_removes_unchecked_and_keeps_done() {
+        // The day's record is what was finished. Clearing is for the things that did
+        // not happen, so the done bullets stay and only the open ones go.
+        let mut n = Daily::parse(d(), NOTE);
+        let removed = n.clear_open();
+        assert_eq!(removed.len(), 3, "two open tasks and one open focus item");
+        assert!(n.raw.contains("- [x] clock in"));
+        assert!(n.raw.contains("- [x] stretch"));
+        assert!(!n.raw.contains("ship portal tests"));
+        assert!(!n.raw.contains("renew parking"));
+    }
+
+    #[test]
+    fn clear_leaves_a_bullet_that_is_not_a_checkbox_alone() {
+        // "- write roadmap" carries no checkbox, so it is prose in a list rather than
+        // a task anyone ticked. Deleting it would lose writing nobody marked open.
+        let mut n = Daily::parse(d(), NOTE);
+        n.clear_open();
+        assert!(n.raw.contains("- write roadmap"));
+    }
+
+    #[test]
+    fn clear_touches_no_section_but_focus_and_tasks() {
+        let mut n = Daily::parse(d(), NOTE);
+        n.clear_open();
+        assert!(n.raw.contains("- 09:00 stood up"), "Record is untouched");
+        assert!(n.raw.contains("keep this"), "Thoughts is untouched");
+    }
+
+    #[test]
+    fn clear_reports_what_it_removed_before_removing_it() {
+        let mut n = Daily::parse(d(), NOTE);
+        let preview = n.open_items();
+        let removed = n.clear_open();
+        assert_eq!(preview, removed, "the dry run and the real run agree");
+    }
+
+    #[test]
+    fn clear_on_an_already_clear_day_removes_nothing() {
+        let mut n = Daily::parse(d(), "# x\n\n## Focus\n- [x] done\n\n## Tasks\n");
+        assert!(n.clear_open().is_empty());
+    }
 
     #[test]
     fn reads_focus_and_task_counts() {

@@ -108,6 +108,8 @@ pub enum Command {
     /// Print the paragraph to paste into any agent's instructions file.
     Onboard,
 
+    /// A named set of work that outlives today. The day draws from it.
+    Sprint(SprintCmd),
     /// Emit shell completions.
     Completion(CompletionArgs),
 }
@@ -132,6 +134,39 @@ pub enum FocusSub {
     Log { text: Vec<String> },
     /// Print today's note as Markdown.
     Today,
+    /// Remove today's unfinished items. Reports without --confirm.
+    Clear(ClearArgs),
+}
+
+#[derive(Debug, Args)]
+pub struct SprintCmd {
+    #[command(subcommand)]
+    pub sub: Option<SprintSub>,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum SprintSub {
+    /// Show the active sprint and what is left in it (default).
+    Show,
+    /// Begin a sprint. Any sprint already active is closed first.
+    Start { name: Vec<String> },
+    /// Add an item to the active sprint.
+    Add { text: Vec<String> },
+    /// Take an item from the sprint and make it today's focus.
+    Pull { text: Vec<String> },
+    /// Check an item off in the sprint.
+    Done { text: Vec<String> },
+    /// Close the active sprint, leaving the note behind.
+    End,
+    /// List every sprint, active first.
+    List,
+}
+
+#[derive(Debug, Args)]
+pub struct ClearArgs {
+    /// Actually remove them. Without this, clear only reports what it would take.
+    #[arg(long)]
+    pub confirm: bool,
 }
 
 #[derive(Debug, Args)]

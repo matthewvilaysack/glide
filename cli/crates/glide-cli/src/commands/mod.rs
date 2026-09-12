@@ -22,6 +22,7 @@ pub mod plan;
 pub mod prime;
 pub mod request;
 pub mod setup;
+pub mod sprint;
 pub mod tools;
 pub mod who_owns;
 
@@ -35,6 +36,14 @@ pub struct CmdCtx {
 
 /// Open the vault from the layered config. Works outside a git repo, because
 /// the vault is the person's, not the repository's.
+/// The vault folder itself, for things that live beside the daily notes.
+///
+/// A sprint note is the user's file in the user's vault, the same as every daily
+/// note, so it resolves the same way rather than inventing a second home for state.
+pub fn vault_root() -> Result<std::path::PathBuf> {
+    Ok(open_vault()?.root)
+}
+
 pub fn open_vault() -> Result<glide_vault::Vault> {
     let cwd = std::env::current_dir()?;
     let repo_root = find_repo_root(&cwd);
