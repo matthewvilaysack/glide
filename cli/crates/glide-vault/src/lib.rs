@@ -228,7 +228,7 @@ pub fn prime_text_with(snap: Option<&Snapshot>, decisions: &[&decide::Decision])
         "\nWorkflow: mention the current focus in one line at the start. When the person says what they are on, run `glide focus set <text>`. \
          When something finishes, `glide focus done <text>`. After every task you complete, `glide focus log <one or two sentences>`, without being asked. \
          Anything they say to remember: `glide focus capture <text>`. \
-         When they settle a question, `glide decide <text>`, and when they rule something out, `glide decide --against <text>`. Read the whole note with `glide focus today`. Add `--json` for structured output. \
+         When they settle a question, `glide decide <text>`, and when they rule something out, `glide decide --against <text>`; add `--team` when it binds everyone, which commits it to the repo so their teammates' agents get it too. Read the whole note with `glide focus today`. Add `--json` for structured output. \
          Never edit the daily note by hand; these verbs are the only writers.\n",
     );
     s

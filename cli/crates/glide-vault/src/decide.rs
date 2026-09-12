@@ -28,15 +28,42 @@ pub struct Decision {
     /// True when this records something ruled OUT, which is the half agents repeat.
     pub against: bool,
     pub on: String,
+    /// Whose decision it is. A team decision outranks a personal one when they
+    /// disagree, because the point of writing it down was to settle it for everyone.
+    pub scope: Scope,
 }
 
 impl Decision {
     /// The one-line form an agent reads.
     pub fn line(&self) -> String {
-        if self.against {
-            format!("ruled out: {}", self.text)
-        } else {
-            format!("decided: {}", self.text)
+        format!(
+            "{}{}: {}",
+            self.scope.label(),
+            if self.against { "ruled out" } else { "decided" },
+            self.text
+        )
+    }
+}
+
+/// Where a decision lives, and who it belongs to.
+///
+/// The whole scaling story is in this enum. A personal decision sits in the vault
+/// and is one person's. A team decision sits in `<repo>/.glide/decisions.md`, which
+/// means git distributes it: one person rules something out, commits, and every
+/// teammate's agent knows by their next pull. No server, no account, no sync
+/// service, and it works for a team of two or two hundred because the mechanism is
+/// the one they already use for everything else.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Scope {
+    Personal,
+    Team,
+}
+
+impl Scope {
+    pub fn label(&self) -> &'static str {
+        match self {
+            Scope::Personal => "",
+            Scope::Team => "team: ",
         }
     }
 }
@@ -45,17 +72,59 @@ pub fn note_path(root: &Path) -> PathBuf {
     root.join("Decisions.md")
 }
 
+/// The team's decisions file inside a repository's own `.glide/`.
+pub fn team_path(repo_root: &Path) -> PathBuf {
+    repo_root.join(".glide").join("decisions.md")
+}
+
 /// Read the decisions note. A missing file is an empty list, not an error: nobody
 /// has decided anything yet is a legitimate state and should not stop a session.
 pub fn load(root: &Path) -> Result<Vec<Decision>> {
-    let path = note_path(root);
+    load_from(&note_path(root), Scope::Personal)
+}
+
+/// The team's decisions, from a repository. Absent is empty, not an error: most
+/// directories are not repositories and that must not stop a session.
+pub fn load_team(repo_root: &Path) -> Result<Vec<Decision>> {
+    load_from(&team_path(repo_root), Scope::Team)
+}
+
+fn load_from(path: &Path, scope: Scope) -> Result<Vec<Decision>> {
     if !path.exists() {
         return Ok(Vec::new());
     }
-    Ok(parse(&fs::read_to_string(path)?))
+    Ok(parse_scoped(&fs::read_to_string(path)?, scope))
+}
+
+/// Team decisions first, then personal, newest last within each.
+///
+/// Order is the conflict rule made visible: when the two disagree the team's is
+/// read first and the personal one reads as the exception it is.
+pub fn merge(team: Vec<Decision>, personal: Vec<Decision>) -> Vec<Decision> {
+    let mut seen: Vec<String> = team.iter().map(key).collect();
+    let mut out = team;
+    for d in personal {
+        let k = key(&d);
+        if seen.contains(&k) {
+            continue;
+        }
+        seen.push(k);
+        out.push(d);
+    }
+    out
+}
+
+/// Someone who settles a thing personally and then again for the team should not
+/// spend two of an agent's eight slots saying it once.
+pub fn key(d: &Decision) -> String {
+    format!("{}|{}", d.against, d.text.trim().to_lowercase())
 }
 
 pub fn parse(raw: &str) -> Vec<Decision> {
+    parse_scoped(raw, Scope::Personal)
+}
+
+pub fn parse_scoped(raw: &str, scope: Scope) -> Vec<Decision> {
     let mut out = Vec::new();
     for line in raw.lines() {
         let t = line.trim_start();
@@ -75,12 +144,14 @@ pub fn parse(raw: &str) -> Vec<Decision> {
                 text: x.trim().to_string(),
                 against: true,
                 on,
+                scope,
             });
         } else if let Some(x) = rest.strip_prefix("decided: ") {
             out.push(Decision {
                 text: x.trim().to_string(),
                 against: false,
                 on,
+                scope,
             });
         }
     }
@@ -89,14 +160,23 @@ pub fn parse(raw: &str) -> Vec<Decision> {
 
 /// Append one decision, creating the note if it is not there.
 pub fn add(root: &Path, text: &str, against: bool, on: NaiveDate) -> Result<Decision> {
-    let path = note_path(root);
+    add_at(&note_path(root), text, against, on, Scope::Personal)
+}
+
+/// Record a team decision into the repository, where git will carry it.
+pub fn add_team(repo_root: &Path, text: &str, against: bool, on: NaiveDate) -> Result<Decision> {
+    add_at(&team_path(repo_root), text, against, on, Scope::Team)
+}
+
+fn add_at(path: &Path, text: &str, against: bool, on: NaiveDate, scope: Scope) -> Result<Decision> {
     let d = Decision {
         text: text.trim().to_string(),
         against,
         on: on.format("%Y-%m-%d").to_string(),
+        scope,
     };
     let mut raw = if path.exists() {
-        fs::read_to_string(&path)?
+        fs::read_to_string(path)?
     } else {
         "# Decisions\n\nWhat has been settled, so nothing settled gets proposed again.\n\n"
             .to_string()
@@ -104,11 +184,16 @@ pub fn add(root: &Path, text: &str, against: bool, on: NaiveDate) -> Result<Deci
     if !raw.ends_with('\n') {
         raw.push('\n');
     }
-    raw.push_str(&format!("- {} {}\n", d.on, d.line()));
+    raw.push_str(&format!(
+        "- {} {}: {}\n",
+        d.on,
+        if d.against { "ruled out" } else { "decided" },
+        d.text
+    ));
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
     }
-    fs::write(&path, raw)?;
+    fs::write(path, raw)?;
     Ok(d)
 }
 
@@ -164,5 +249,72 @@ mod tests {
     #[test]
     fn recent_does_not_panic_when_there_are_fewer_than_asked_for() {
         assert_eq!(recent(&parse(NOTE), 99).len(), 2);
+    }
+
+    #[test]
+    fn recent_of_nothing_is_nothing() {
+        assert!(recent(&[], 8).is_empty());
+        assert!(recent(&parse(NOTE), 0).is_empty());
+    }
+
+    #[test]
+    fn a_team_decision_says_it_is_the_teams() {
+        let d = &parse_scoped("- 2026-01-01 ruled out: Mongo", Scope::Team)[0];
+        assert_eq!(d.line(), "team: ruled out: Mongo");
+        assert_eq!(d.scope, Scope::Team);
+    }
+
+    #[test]
+    fn a_team_decision_written_to_the_repo_reads_back_the_same() {
+        let dir = tempfile::tempdir().unwrap();
+        let on = chrono::NaiveDate::from_ymd_opt(2026, 1, 1).unwrap();
+        add_team(dir.path(), "Postgres", false, on).unwrap();
+        add_team(dir.path(), "Mongo", true, on).unwrap();
+        let back = load_team(dir.path()).unwrap();
+        assert_eq!(back.len(), 2);
+        assert_eq!(back[1].line(), "team: ruled out: Mongo");
+        assert!(team_path(dir.path()).ends_with(".glide/decisions.md"));
+    }
+
+    #[test]
+    fn a_team_decision_is_not_written_into_the_personal_note() {
+        let dir = tempfile::tempdir().unwrap();
+        let on = chrono::NaiveDate::from_ymd_opt(2026, 1, 1).unwrap();
+        add_team(dir.path(), "Postgres", false, on).unwrap();
+        assert!(load(dir.path()).unwrap().is_empty());
+    }
+
+    #[test]
+    fn the_team_is_read_first_so_it_wins_when_the_two_disagree() {
+        let team = parse_scoped("- 2026-01-01 ruled out: Mongo", Scope::Team);
+        let mine = parse_scoped("- 2026-01-02 decided: Mongo actually", Scope::Personal);
+        let merged = merge(team, mine);
+        assert_eq!(merged[0].line(), "team: ruled out: Mongo");
+        assert_eq!(merged[1].line(), "decided: Mongo actually");
+    }
+
+    #[test]
+    fn settling_the_same_thing_twice_is_listed_once() {
+        let team = parse_scoped("- 2026-01-01 ruled out: Mongo", Scope::Team);
+        let mine = parse_scoped("- 2026-01-02 ruled out:  mongo ", Scope::Personal);
+        let merged = merge(team, mine);
+        assert_eq!(merged.len(), 1);
+        assert_eq!(merged[0].scope, Scope::Team);
+    }
+
+    #[test]
+    fn a_missing_team_file_is_no_decisions_rather_than_an_error() {
+        let dir = tempfile::tempdir().unwrap();
+        assert!(load_team(dir.path()).unwrap().is_empty());
+    }
+
+    #[test]
+    fn the_scope_label_is_not_written_to_disk() {
+        let dir = tempfile::tempdir().unwrap();
+        let on = chrono::NaiveDate::from_ymd_opt(2026, 1, 1).unwrap();
+        add_team(dir.path(), "Postgres", false, on).unwrap();
+        let raw = std::fs::read_to_string(team_path(dir.path())).unwrap();
+        assert!(raw.contains("- 2026-01-01 decided: Postgres"), "{raw}");
+        assert!(!raw.contains("team:"), "{raw}");
     }
 }

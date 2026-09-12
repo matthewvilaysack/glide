@@ -112,7 +112,7 @@ pub enum Command {
     Sprint(SprintCmd),
     /// Record what has been settled, so nothing settled gets proposed again.
     Decide(DecideArgs),
-    /// Everything settled so far.
+    /// Everything settled so far, the team's first and then your own.
     Decisions,
     /// Emit shell completions.
     Completion(CompletionArgs),
@@ -151,6 +151,9 @@ pub struct DecideArgs {
     /// Record something ruled OUT rather than chosen.
     #[arg(long)]
     pub against: bool,
+    /// Settle it for the whole team: writes into the repo, so git carries it.
+    #[arg(long)]
+    pub team: bool,
 }
 
 #[derive(Debug, Args)]

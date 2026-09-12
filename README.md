@@ -93,6 +93,27 @@ One decision costs about twenty tokens to carry and removes the turns that would
 Every other tool in this category injects what happened: session memory, compressed command output, retrieved facts.
 None of them inject what you decided, because none of them have a place where you write a decision down.
 
+### Settling it for everyone
+
+A decision that binds the team belongs to the repository rather than to you.
+
+```sh
+glide decide --team --against mongo, we are on postgres and the ops story is settled
+git add .glide/decisions.md && git commit -m "settle the datastore"
+```
+
+That writes `<repo>/.glide/decisions.md`, so git carries it.
+One person rules something out, commits, and every teammate's agent knows at their next pull.
+There is no server, no account and nothing to sync, because the team already has a thing that distributes files to everyone working on the repo, and this is a file.
+It is also why it costs the same whether there are two of you or two hundred.
+
+`glide decisions` reads the team's first and then your own, and `glide prime` does the same, so a decision made for everyone is the one an agent sees first.
+Settle something personally and then again for the team and it is listed once.
+Outside a repository `--team` is an error, while reading degrades quietly to your own decisions, because a session has to start whether or not there is a repo.
+
+The file is append-only prose, so two people adding a decision on two branches conflict at the last line and the resolution is to keep both.
+That is the whole merge story and it does not need tooling.
+
 ### Work that outlives today
 
 The daily note is thrown away, which is what makes it useful, and it is also why the week's work needs somewhere else to sit.

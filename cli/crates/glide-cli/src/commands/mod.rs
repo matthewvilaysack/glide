@@ -45,6 +45,15 @@ pub fn vault_root() -> Result<std::path::PathBuf> {
     Ok(open_vault()?.root)
 }
 
+/// The repository the person is standing in, for the things a team shares.
+///
+/// Unlike the vault this really is the repository's, so being outside one is a
+/// plain error rather than something to guess around.
+pub fn repo_root() -> Result<PathBuf> {
+    let cwd = std::env::current_dir()?;
+    find_repo_root(&cwd).ok_or_else(|| GlideError::NotInRepo(not_in_repo(&cwd)).into())
+}
+
 pub fn open_vault() -> Result<glide_vault::Vault> {
     let cwd = std::env::current_dir()?;
     let repo_root = find_repo_root(&cwd);
