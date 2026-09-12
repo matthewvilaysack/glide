@@ -39,15 +39,20 @@ fn active(dir: &std::path::Path) -> Result<Option<Sprint>> {
 
 /// The active sprint, or a refusal that names the command that fixes it.
 fn require_active(dir: &std::path::Path) -> Result<Sprint> {
-    active(dir)?.ok_or_else(|| anyhow!("no active sprint; start one with `glide sprint start <name>`"))
+    active(dir)?
+        .ok_or_else(|| anyhow!("no active sprint; start one with `glide sprint start <name>`"))
 }
 
 fn save(s: &Sprint) -> Result<()> {
-    let started = chrono::NaiveDate::parse_from_str(&s.started, "%Y-%m-%d").unwrap_or_else(|_| Vault::today());
+    let started = chrono::NaiveDate::parse_from_str(&s.started, "%Y-%m-%d")
+        .unwrap_or_else(|_| Vault::today());
     if let Some(parent) = s.path.parent() {
         std::fs::create_dir_all(parent)?;
     }
-    std::fs::write(&s.path, sprint::render(&s.name, started, s.active, &s.items))?;
+    std::fs::write(
+        &s.path,
+        sprint::render(&s.name, started, s.active, &s.items),
+    )?;
     Ok(())
 }
 
@@ -58,7 +63,10 @@ fn show(globals: &GlobalArgs, dir: &std::path::Path, color: bool) -> Result<()> 
                 return print_json(&serde_json::json!({ "active": null }));
             }
             println!("no active sprint");
-            println!("{}", dim("start one with `glide sprint start <name>`", color));
+            println!(
+                "{}",
+                dim("start one with `glide sprint start <name>`", color)
+            );
             Ok(())
         }
         Some(s) => {
@@ -102,7 +110,9 @@ fn list(globals: &GlobalArgs, dir: &std::path::Path) -> Result<()> {
 
 fn start(globals: &GlobalArgs, dir: &std::path::Path, name: &str, color: bool) -> Result<()> {
     if name.trim().is_empty() {
-        return Err(anyhow!("a sprint needs a name: `glide sprint start <name>`"));
+        return Err(anyhow!(
+            "a sprint needs a name: `glide sprint start <name>`"
+        ));
     }
     // At most one active sprint, so closing the previous one is part of starting the
     // next rather than a step someone has to remember. The note is left behind.
@@ -112,10 +122,19 @@ fn start(globals: &GlobalArgs, dir: &std::path::Path, name: &str, color: bool) -
     }
     let slug = sprint::slugify(name);
     let path = dir.join(format!("{}.md", slug));
-    let s = Sprint { slug, name: name.trim().to_string(), started: Vault::today().format("%Y-%m-%d").to_string(), active: true, items: Vec::new(), path };
+    let s = Sprint {
+        slug,
+        name: name.trim().to_string(),
+        started: Vault::today().format("%Y-%m-%d").to_string(),
+        active: true,
+        items: Vec::new(),
+        path,
+    };
     save(&s)?;
     if wants_json(globals) {
-        return print_json(&serde_json::json!({ "started": s.slug, "path": s.path.display().to_string() }));
+        return print_json(
+            &serde_json::json!({ "started": s.slug, "path": s.path.display().to_string() }),
+        );
     }
     println!("{}", ok(&format!("sprint {}", s.name), color));
     println!("{}", dim(&s.path.display().to_string(), color));
@@ -124,10 +143,15 @@ fn start(globals: &GlobalArgs, dir: &std::path::Path, name: &str, color: bool) -
 
 fn add(globals: &GlobalArgs, dir: &std::path::Path, text: &str, color: bool) -> Result<()> {
     let mut s = require_active(dir)?;
-    s.items.push(SprintItem { text: text.trim().to_string(), done: false });
+    s.items.push(SprintItem {
+        text: text.trim().to_string(),
+        done: false,
+    });
     save(&s)?;
     if wants_json(globals) {
-        return print_json(&serde_json::json!({ "added": text, "sprint": s.slug, "open": s.open().len() }));
+        return print_json(
+            &serde_json::json!({ "added": text, "sprint": s.slug, "open": s.open().len() }),
+        );
     }
     println!("{}", ok(&format!("added {}", text), color));
     Ok(())
@@ -136,7 +160,10 @@ fn add(globals: &GlobalArgs, dir: &std::path::Path, text: &str, color: bool) -> 
 fn done(globals: &GlobalArgs, dir: &std::path::Path, text: &str, color: bool) -> Result<()> {
     let mut s = require_active(dir)?;
     let needle = text.trim().to_lowercase();
-    let hit = s.items.iter_mut().find(|i| !i.done && i.text.to_lowercase().contains(&needle));
+    let hit = s
+        .items
+        .iter_mut()
+        .find(|i| !i.done && i.text.to_lowercase().contains(&needle));
     match hit {
         None => Err(anyhow!("no open item in {} matches {:?}", s.name, text)),
         Some(item) => {
@@ -144,7 +171,9 @@ fn done(globals: &GlobalArgs, dir: &std::path::Path, text: &str, color: bool) ->
             let marked = item.text.clone();
             save(&s)?;
             if wants_json(globals) {
-                return print_json(&serde_json::json!({ "done": marked, "sprint": s.slug, "remaining": s.open().len() }));
+                return print_json(
+                    &serde_json::json!({ "done": marked, "sprint": s.slug, "remaining": s.open().len() }),
+                );
             }
             println!("{}", ok(&format!("done {}", marked), color));
             Ok(())
@@ -157,9 +186,22 @@ fn end(globals: &GlobalArgs, dir: &std::path::Path, color: bool) -> Result<()> {
     s.active = false;
     save(&s)?;
     if wants_json(globals) {
-        return print_json(&serde_json::json!({ "ended": s.slug, "done": s.done_count(), "total": s.items.len() }));
+        return print_json(
+            &serde_json::json!({ "ended": s.slug, "done": s.done_count(), "total": s.items.len() }),
+        );
     }
-    println!("{}", ok(&format!("ended {} ({}/{} done)", s.name, s.done_count(), s.items.len()), color));
+    println!(
+        "{}",
+        ok(
+            &format!(
+                "ended {} ({}/{} done)",
+                s.name,
+                s.done_count(),
+                s.items.len()
+            ),
+            color
+        )
+    );
     Ok(())
 }
 
@@ -184,7 +226,9 @@ fn pull(globals: &GlobalArgs, dir: &std::path::Path, text: &str, color: bool) ->
     note.save()?;
 
     if wants_json(globals) {
-        return print_json(&serde_json::json!({ "pulled": chosen, "sprint": s.slug, "remaining": s.open().len() }));
+        return print_json(
+            &serde_json::json!({ "pulled": chosen, "sprint": s.slug, "remaining": s.open().len() }),
+        );
     }
     println!("{}", ok(&format!("now {}", chosen), color));
     println!("{}", dim(&format!("from {}", s.name), color));

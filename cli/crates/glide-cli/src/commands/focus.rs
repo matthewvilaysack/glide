@@ -58,7 +58,12 @@ pub fn run(globals: &GlobalArgs, cmd: FocusCmd) -> Result<()> {
 /// destructive command in this toolchain uses. The thing being deleted is a person's
 /// own writing in a file they own, and a command that empties it on a typo is worse
 /// than one that asks twice.
-fn clear(globals: &GlobalArgs, mut note: glide_vault::Daily, args: ClearArgs, color: bool) -> Result<()> {
+fn clear(
+    globals: &GlobalArgs,
+    mut note: glide_vault::Daily,
+    args: ClearArgs,
+    color: bool,
+) -> Result<()> {
     let open = note.open_items();
 
     if open.is_empty() {

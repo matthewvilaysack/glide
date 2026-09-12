@@ -129,14 +129,30 @@ pub fn parse(path: &Path, raw: &str) -> Result<Sprint> {
             Some(b) => b,
             None => continue,
         };
-        if let Some(rest) = body.strip_prefix("[x] ").or_else(|| body.strip_prefix("[X] ")) {
-            items.push(SprintItem { text: rest.trim().to_string(), done: true });
+        if let Some(rest) = body
+            .strip_prefix("[x] ")
+            .or_else(|| body.strip_prefix("[X] "))
+        {
+            items.push(SprintItem {
+                text: rest.trim().to_string(),
+                done: true,
+            });
         } else if let Some(rest) = body.strip_prefix("[ ] ") {
-            items.push(SprintItem { text: rest.trim().to_string(), done: false });
+            items.push(SprintItem {
+                text: rest.trim().to_string(),
+                done: false,
+            });
         }
     }
 
-    Ok(Sprint { slug, name, started, active, items, path: path.to_path_buf() })
+    Ok(Sprint {
+        slug,
+        name,
+        started,
+        active,
+        items,
+        path: path.to_path_buf(),
+    })
 }
 
 fn front(raw: &str, key: &str) -> Option<String> {
@@ -195,7 +211,12 @@ mod tests {
         // The file is the user's, so it has to be readable back exactly as written.
         // Anything lost here is lost from a note someone keeps in their own vault.
         let s = parse(Path::new("/x/a.md"), NOTE).unwrap();
-        let again = render(&s.name, NaiveDate::from_ymd_opt(2026, 9, 11).unwrap(), true, &s.items);
+        let again = render(
+            &s.name,
+            NaiveDate::from_ymd_opt(2026, 9, 11).unwrap(),
+            true,
+            &s.items,
+        );
         let back = parse(Path::new("/x/a.md"), &again).unwrap();
         assert_eq!(back.items, s.items);
         assert_eq!(back.name, s.name);
@@ -211,9 +232,13 @@ mod tests {
 
     #[test]
     fn the_active_sprint_sorts_first() {
-        let a = parse(Path::new("/x/old.md"), "---\nsprint: old\nstarted: 2026-01-01\nactive: false\n---\n# Old\n## Items\n").unwrap();
+        let a = parse(
+            Path::new("/x/old.md"),
+            "---\nsprint: old\nstarted: 2026-01-01\nactive: false\n---\n# Old\n## Items\n",
+        )
+        .unwrap();
         let b = parse(Path::new("/x/now.md"), NOTE).unwrap();
-        let mut v = vec![a, b];
+        let mut v = [a, b];
         v.sort_by(|x, y| y.active.cmp(&x.active).then(y.started.cmp(&x.started)));
         assert!(v[0].active);
     }
