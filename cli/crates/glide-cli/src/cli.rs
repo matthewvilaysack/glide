@@ -134,6 +134,8 @@ pub enum FocusSub {
     Log { text: Vec<String> },
     /// Print today's note as Markdown.
     Today,
+    /// The Focus list, with the current one marked. Same as `glide show`.
+    List,
     /// Remove today's unfinished items. Reports without --confirm.
     Clear(ClearArgs),
 }
@@ -156,6 +158,8 @@ pub enum SprintSub {
     Pull { text: Vec<String> },
     /// Check an item off in the sprint.
     Done { text: Vec<String> },
+    /// Remove the sprint's unfinished items. Reports without --confirm.
+    Clear(ClearArgs),
     /// Close the active sprint, leaving the note behind.
     End,
     /// List every sprint, active first.

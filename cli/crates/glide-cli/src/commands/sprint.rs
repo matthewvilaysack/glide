@@ -28,6 +28,7 @@ pub fn run(globals: &GlobalArgs, cmd: SprintCmd) -> Result<()> {
         SprintSub::Start { name } => start(globals, &dir, &name.join(" "), color),
         SprintSub::Add { text } => add(globals, &dir, &text.join(" "), color),
         SprintSub::Done { text } => done(globals, &dir, &text.join(" "), color),
+        SprintSub::Clear(args) => clear(globals, &dir, args.confirm, color),
         SprintSub::End => end(globals, &dir, color),
         SprintSub::Pull { text } => pull(globals, &dir, &text.join(" "), color),
     }
@@ -201,6 +202,51 @@ fn end(globals: &GlobalArgs, dir: &std::path::Path, color: bool) -> Result<()> {
             ),
             color
         )
+    );
+    Ok(())
+}
+
+/// Drop the sprint's unfinished items, keeping what was finished.
+///
+/// Symmetry with `focus clear`, and reached for before it existed. Same rule for
+/// the same reason: done items are the record of what the sprint achieved, and the
+/// thing being cleared is what it did not.
+fn clear(globals: &GlobalArgs, dir: &std::path::Path, confirm: bool, color: bool) -> Result<()> {
+    let mut s = require_active(dir)?;
+    let open: Vec<String> = s.open().into_iter().map(|i| i.text.clone()).collect();
+
+    if open.is_empty() {
+        if wants_json(globals) {
+            return print_json(&serde_json::json!({ "removed": [], "sprint": s.slug }));
+        }
+        println!("nothing open in {}", s.name);
+        return Ok(());
+    }
+
+    if !confirm {
+        if wants_json(globals) {
+            return print_json(
+                &serde_json::json!({ "wouldRemove": open, "sprint": s.slug, "confirmed": false }),
+            );
+        }
+        println!("{} open in {}, nothing removed:", open.len(), s.name);
+        for item in &open {
+            println!("  {}", item);
+        }
+        println!("{}", dim("pass --confirm to remove them", color));
+        return Ok(());
+    }
+
+    s.items.retain(|i| i.done);
+    save(&s)?;
+    if wants_json(globals) {
+        return print_json(
+            &serde_json::json!({ "removed": open, "sprint": s.slug, "confirmed": true }),
+        );
+    }
+    println!(
+        "{}",
+        ok(&format!("cleared {} from {}", open.len(), s.name), color)
     );
     Ok(())
 }

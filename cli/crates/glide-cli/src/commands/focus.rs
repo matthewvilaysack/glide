@@ -40,6 +40,7 @@ pub fn run(globals: &GlobalArgs, cmd: FocusCmd) -> Result<()> {
             note.save()?;
             report(globals, color, "captured", &t, &note.snapshot())?;
         }
+        FocusSub::List => return show_list(globals),
         FocusSub::Clear(args) => return clear(globals, note, args, color),
         FocusSub::Log { text } => {
             let t = text.join(" ");
