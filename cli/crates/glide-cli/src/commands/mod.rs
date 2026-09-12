@@ -61,12 +61,28 @@ pub fn open_vault() -> Result<glide_vault::Vault> {
     )
 }
 
+/// What to say when a repository command is run outside one.
+///
+/// Glide has two halves and they have different requirements. The daily note lives
+/// in a vault and works from anywhere; the graph is built from a repository and
+/// cannot exist without one. Saying only "not inside a git repo" states a fact and
+/// leaves someone to guess whether they typed the wrong command or are standing in
+/// the wrong place, when the answer is usually the second and the commands that
+/// would have worked are one line away.
+pub fn not_in_repo(cwd: &std::path::Path) -> String {
+    format!(
+        "`{}` reads a repository, and {} is not inside one.\n\
+         help: cd into a repo first. The daily-note commands (glide, focus, sprint, prime, show) work anywhere.",
+        std::env::args().nth(1).unwrap_or_else(|| "this command".into()),
+        cwd.display()
+    )
+}
+
 impl CmdCtx {
     pub fn discover() -> Result<Self> {
         let cwd = std::env::current_dir()?;
-        let repo_root = find_repo_root(&cwd).ok_or_else(|| {
-            GlideError::Config(format!("not inside a git repo (cwd: {})", cwd.display()))
-        })?;
+        let repo_root =
+            find_repo_root(&cwd).ok_or_else(|| GlideError::NotInRepo(not_in_repo(&cwd)))?;
         let config = Config::load(Some(&repo_root))?;
         let db_path = config.resolved_db_path(&repo_root);
         Ok(CmdCtx {
@@ -82,5 +98,22 @@ impl CmdCtx {
         }
         glide_graph::open(&self.db_path)
             .with_context(|| format!("opening {}", self.db_path.display()))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::not_in_repo;
+    use std::path::Path;
+
+    #[test]
+    fn the_refusal_names_what_works_instead() {
+        // A refusal that only states the problem costs a second guess. This one has
+        // to carry the commands that would have worked from where they are standing.
+        let msg = not_in_repo(Path::new("/Users/someone"));
+        assert!(msg.contains("/Users/someone"));
+        assert!(msg.contains("cd into a repo"));
+        assert!(msg.contains("focus"), "names a command that works anywhere");
+        assert!(msg.contains("prime"));
     }
 }

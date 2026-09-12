@@ -8,7 +8,7 @@ use crate::output::{ok, use_color};
 pub fn run(globals: &GlobalArgs, args: InitArgs) -> Result<()> {
     let cwd = std::env::current_dir()?;
     let repo_root = find_repo_root(&cwd)
-        .ok_or_else(|| anyhow::anyhow!("not inside a git repo (cwd: {})", cwd.display()))?;
+        .ok_or_else(|| anyhow::anyhow!("{}", crate::commands::not_in_repo(&cwd)))?;
     let ws = workspace_dir(&repo_root);
 
     if ws.exists() && !args.force {

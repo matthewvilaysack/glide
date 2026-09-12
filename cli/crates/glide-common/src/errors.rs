@@ -8,6 +8,12 @@ pub enum GlideError {
     #[error("graph not initialized; run `glide init`")]
     GraphNotInitialized,
 
+    /// Its own variant rather than a Config error, because standing in the wrong
+    /// directory is not a configuration problem and labelling it as one sends
+    /// someone to look at a file that is fine.
+    #[error("{0}")]
+    NotInRepo(String),
+
     #[error("io: {0}")]
     Io(#[from] std::io::Error),
 
