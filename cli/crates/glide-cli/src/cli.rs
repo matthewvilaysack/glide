@@ -5,8 +5,8 @@ use glide_common::Stream;
 #[command(
     name = "glide",
     version,
-    about = "glide — onboarding agent (who-owns, day-1 plans, access requests)",
-    long_about = "Single Rust binary for the glide onboarding agent. Indexes the local repo into a SQLite knowledge graph, then answers ownership questions, drafts day-1 plans, and files access requests without leaving the machine."
+    about = "glide - keep today's priorities in view while you work in the terminal",
+    long_about = "One binary that keeps today's plan where you type. Your priorities live in a Markdown note you own, in a folder you already sync, and the agent in your terminal gets the same verbs you do. It also indexes a repository into a local knowledge graph for ownership questions and day-one plans, which is what the repository commands are for. Nothing leaves the machine."
 )]
 pub struct Cli {
     /// One-shot mode: route the prompt to the right verb and exit.
@@ -83,7 +83,7 @@ pub enum Command {
     /// Manage external tools (e.g. repomix).
     Tools(ToolsCmd),
 
-    /// Keep today's priorities in view: show, set, done, capture, log.
+    /// Keep today's priorities in view: show, list, set, done, capture, log, today, clear.
     Focus(FocusCmd),
 
     /// Today's focus strip and the Focus list (same as `glide focus show`).
