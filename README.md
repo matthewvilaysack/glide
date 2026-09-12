@@ -4,7 +4,7 @@ Keep your priorities in view while you work in the terminal.
 
 Glide is one binary that sits under whatever terminal you already use (Warp, iTerm, tmux) and keeps today's plan where you type.
 Your priorities live in a Markdown note you own, in a folder you already sync.
-The agent you run in the terminal (Claude Code, Warp AI, any MCP client) gets the same six verbs you do, so the status writes itself while the work happens instead of on Friday from a blank page.
+The agent you run in the terminal (Claude Code, Warp AI, any MCP client) gets the same verbs you do, so the status writes itself while the work happens instead of on Friday from a blank page.
 
 ```
 ▶ ship portal tests · focus 1/3 · 4 open · 2 logged
@@ -49,7 +49,7 @@ From source: `cargo install --git https://github.com/matthewvilaysack/glide glid
    glide setup claude --global
    ```
 
-   That installs a SessionStart hook running `glide prime --hook-json`, which puts today's focus and the six verbs into every session (and again after every compaction) for a few hundred tokens, no MCP schema overhead. `glide setup claude --check` and `--remove` do what they say. Warp: `glide setup warp` prints the rule to paste. Anything else: `glide onboard` prints the paragraph for its instructions file. The MCP server (`glide mcp serve`) is there for clients without a shell, Claude Desktop for one.
+   That installs a SessionStart hook running `glide prime --hook-json`, which puts today's focus and the verbs into every session (and again after every compaction) for a few hundred tokens, no MCP schema overhead. `glide setup claude --check` and `--remove` do what they say. Warp: `glide setup warp` prints the rule to paste. Anything else: `glide onboard` prints the paragraph for its instructions file. The MCP server (`glide mcp serve`) is there for clients without a shell, Claude Desktop for one.
 
 3. Keep it on screen. In `~/.tmux.conf`:
 
@@ -67,9 +67,32 @@ glide focus done portal                 # finished
 glide focus capture idea for the demo   # into Notes
 glide focus log fixed the flaky build   # into Record, with a timestamp
 glide focus today                       # the whole note
+glide focus clear                       # what is still open today; --confirm removes it
 glide                                   # the block console, with the focus strip in its top bar
 glide prime                             # what an agent sees at session start
 ```
+
+`clear` reports before it removes anything, and takes `--confirm` to actually do it.
+Finished items stay, because they are the day's record of what happened and the thing being cleared is what did not.
+A bullet with no checkbox stays too: that is prose you wrote in a list rather than a task you left open.
+
+### Work that outlives today
+
+The daily note is thrown away, which is what makes it useful, and it is also why the week's work needs somewhere else to sit.
+
+```sh
+glide sprint start LEG test pipeline    # begin one; any sprint already open is closed
+glide sprint add close the fold         # put work in it
+glide sprint                            # what is left, and how far along
+glide sprint pull fold                  # take an item and make it today's focus
+glide sprint done fold                  # check it off in the sprint
+glide sprint list                       # every sprint, active first
+```
+
+`pull` is the one that matters: it is the join between the list and the day, without which a sprint is a second list to keep in sync by hand.
+
+A sprint is a Markdown note in the same vault, under `Sprints/`, so it opens in Obsidian, diffs in git, and can be edited by hand without asking this tool.
+At most one is active at a time, which is a limit rather than a missing feature: a tool that let three sprints be current would hand the choice back to you at the moment it is meant to make it.
 
 Say the same things to your agent instead and it calls the same verbs.
 Its server instructions ask it to read your focus at the start of a session and log what it did after every task, so the Record section fills in behind you.
