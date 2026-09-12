@@ -129,6 +129,9 @@ Outside a repository `--team` is an error, while reading degrades quietly to you
 The file is append-only prose, so two people adding a decision on two branches conflict at the last line and the resolution is to keep both.
 That is the whole merge story and it does not need tooling.
 
+Before v0.6.0 this file was `.glide/decisions.md`.
+A repo that already has one keeps using it, glide will not start a second, and there is nothing to migrate.
+
 The file is deliberately not named after this tool, and the format is [written down](SPEC.md) so other tools can read and write it.
 The parser is about thirty lines.
 If you implement it somewhere else, open an issue and it gets listed in the spec: a format with one implementation is a file format, and the version worth anyone's time is the one with three.
