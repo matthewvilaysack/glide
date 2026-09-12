@@ -48,11 +48,16 @@ impl Decision {
 /// Where a decision lives, and who it belongs to.
 ///
 /// The whole scaling story is in this enum. A personal decision sits in the vault
-/// and is one person's. A team decision sits in `<repo>/.glide/decisions.md`, which
-/// means git distributes it: one person rules something out, commits, and every
+/// and is one person's. A team decision sits in `<repo>/DECISIONS.md`, which means
+/// git distributes it: one person rules something out, commits, and every
 /// teammate's agent knows by their next pull. No server, no account, no sync
 /// service, and it works for a team of two or two hundred because the mechanism is
 /// the one they already use for everything else.
+///
+/// The team file is deliberately not named after this tool. A format called
+/// `.glide/` is one no other tool will ever read, and a decision record is only
+/// worth writing if whatever agent the next person runs can read it too. The
+/// format is specified in SPEC.md and glide is one implementation of it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Scope {
     Personal,
@@ -72,9 +77,33 @@ pub fn note_path(root: &Path) -> PathBuf {
     root.join("Decisions.md")
 }
 
-/// The team's decisions file inside a repository's own `.glide/`.
+/// The file this tool writes team decisions to.
+pub const TEAM_FILE: &str = "DECISIONS.md";
+
+/// Read as well as written, for teams that would rather not have it at the root.
+/// Tools should accept both and write the first.
+pub const TEAM_FILE_ALT: &str = ".glide/decisions.md";
+
+/// Where to write a team decision: the repository root, beside README.md.
 pub fn team_path(repo_root: &Path) -> PathBuf {
-    repo_root.join(".glide").join("decisions.md")
+    repo_root.join(TEAM_FILE)
+}
+
+/// Where to read one from, which is whichever of the two a repo actually has.
+///
+/// A repo that already keeps the file tucked away keeps working; a repo with
+/// neither gets the root path, so the first `--team` decision creates the
+/// discoverable one.
+pub fn team_path_for_read(repo_root: &Path) -> PathBuf {
+    let root = repo_root.join(TEAM_FILE);
+    if root.exists() {
+        return root;
+    }
+    let alt = repo_root.join(TEAM_FILE_ALT);
+    if alt.exists() {
+        return alt;
+    }
+    root
 }
 
 /// Read the decisions note. A missing file is an empty list, not an error: nobody
@@ -86,7 +115,7 @@ pub fn load(root: &Path) -> Result<Vec<Decision>> {
 /// The team's decisions, from a repository. Absent is empty, not an error: most
 /// directories are not repositories and that must not stop a session.
 pub fn load_team(repo_root: &Path) -> Result<Vec<Decision>> {
-    load_from(&team_path(repo_root), Scope::Team)
+    load_from(&team_path_for_read(repo_root), Scope::Team)
 }
 
 fn load_from(path: &Path, scope: Scope) -> Result<Vec<Decision>> {
@@ -165,7 +194,13 @@ pub fn add(root: &Path, text: &str, against: bool, on: NaiveDate) -> Result<Deci
 
 /// Record a team decision into the repository, where git will carry it.
 pub fn add_team(repo_root: &Path, text: &str, against: bool, on: NaiveDate) -> Result<Decision> {
-    add_at(&team_path(repo_root), text, against, on, Scope::Team)
+    add_at(
+        &team_path_for_read(repo_root),
+        text,
+        against,
+        on,
+        Scope::Team,
+    )
 }
 
 fn add_at(path: &Path, text: &str, against: bool, on: NaiveDate, scope: Scope) -> Result<Decision> {
@@ -273,15 +308,20 @@ mod tests {
         let back = load_team(dir.path()).unwrap();
         assert_eq!(back.len(), 2);
         assert_eq!(back[1].line(), "team: ruled out: Mongo");
-        assert!(team_path(dir.path()).ends_with(".glide/decisions.md"));
+        assert!(team_path(dir.path()).ends_with("DECISIONS.md"));
     }
 
     #[test]
     fn a_team_decision_is_not_written_into_the_personal_note() {
-        let dir = tempfile::tempdir().unwrap();
+        // A vault and a repository are different folders, which is what keeps
+        // `DECISIONS.md` and the vault's `Decisions.md` from being one file on a
+        // case-insensitive disk.
+        let vault = tempfile::tempdir().unwrap();
+        let repo = tempfile::tempdir().unwrap();
         let on = chrono::NaiveDate::from_ymd_opt(2026, 1, 1).unwrap();
-        add_team(dir.path(), "Postgres", false, on).unwrap();
-        assert!(load(dir.path()).unwrap().is_empty());
+        add_team(repo.path(), "Postgres", false, on).unwrap();
+        assert!(load(vault.path()).unwrap().is_empty());
+        assert_eq!(load_team(repo.path()).unwrap().len(), 1);
     }
 
     #[test]
@@ -303,6 +343,42 @@ mod tests {
     }
 
     #[test]
+    fn a_repo_that_already_tucked_the_file_away_keeps_using_it() {
+        let dir = tempfile::tempdir().unwrap();
+        let alt = dir.path().join(TEAM_FILE_ALT);
+        std::fs::create_dir_all(alt.parent().unwrap()).unwrap();
+        std::fs::write(&alt, "- 2026-01-01 ruled out: Mongo\n").unwrap();
+
+        assert_eq!(load_team(dir.path()).unwrap().len(), 1);
+        add_team(
+            dir.path(),
+            "Postgres",
+            false,
+            chrono::NaiveDate::from_ymd_opt(2026, 1, 2).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(load_team(dir.path()).unwrap().len(), 2);
+        assert!(
+            !dir.path().join(TEAM_FILE).exists(),
+            "must not start a second file"
+        );
+    }
+
+    #[test]
+    fn a_repo_with_neither_file_gets_the_discoverable_one() {
+        let dir = tempfile::tempdir().unwrap();
+        add_team(
+            dir.path(),
+            "Postgres",
+            false,
+            chrono::NaiveDate::from_ymd_opt(2026, 1, 1).unwrap(),
+        )
+        .unwrap();
+        assert!(dir.path().join(TEAM_FILE).exists());
+        assert!(!dir.path().join(TEAM_FILE_ALT).exists());
+    }
+
+    #[test]
     fn a_missing_team_file_is_no_decisions_rather_than_an_error() {
         let dir = tempfile::tempdir().unwrap();
         assert!(load_team(dir.path()).unwrap().is_empty());
@@ -313,7 +389,7 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let on = chrono::NaiveDate::from_ymd_opt(2026, 1, 1).unwrap();
         add_team(dir.path(), "Postgres", false, on).unwrap();
-        let raw = std::fs::read_to_string(team_path(dir.path())).unwrap();
+        let raw = std::fs::read_to_string(team_path_for_read(dir.path())).unwrap();
         assert!(raw.contains("- 2026-01-01 decided: Postgres"), "{raw}");
         assert!(!raw.contains("team:"), "{raw}");
     }

@@ -1,10 +1,25 @@
 # glide
 
-Keep your priorities in view while you work in the terminal.
+Your team already decided this. Your agent doesn't know.
 
-Glide is one binary that sits under whatever terminal you already use (Warp, iTerm, tmux) and keeps today's plan where you type.
-Your priorities live in a Markdown note you own, in a folder you already sync.
-The agent you run in the terminal (Claude Code, Warp AI, any MCP client) gets the same verbs you do, so the status writes itself while the work happens instead of on Friday from a blank page.
+Every tool that gives a coding agent memory injects what *happened*: session transcripts, compressed output, retrieved files.
+None of them inject what was *decided*, because none of them have a place where a person writes a decision down.
+So the team rules out Mongo on a Tuesday, and on Thursday an agent proposes it again, to somebody else, and that person spends turns saying no.
+
+```sh
+glide decide --team --against mongo, we are on postgres and the ops story is settled
+git commit -am "settle the datastore"
+```
+
+That is the whole mechanism.
+The decision is a line in `DECISIONS.md` in your repository, so git carries it: every teammate's agent opens its next session already knowing, with no server, no account and nothing to sync.
+It costs the same for two people or two hundred, because the marginal teammate is a clone.
+
+The file format is [specified separately](SPEC.md) and published under CC0.
+It is not owned by this tool, and a decision is only worth writing if whatever agent the next person runs can read it too.
+
+Glide is also the thing that keeps today's plan where you type, which is where the decisions come from.
+One binary under whatever terminal you already use (Warp, iTerm, tmux), writing to a Markdown note you own in a folder you already sync.
 
 ```
 ▶ ship portal tests · focus 1/3 · 4 open · 2 logged
@@ -99,10 +114,10 @@ A decision that binds the team belongs to the repository rather than to you.
 
 ```sh
 glide decide --team --against mongo, we are on postgres and the ops story is settled
-git add .glide/decisions.md && git commit -m "settle the datastore"
+git add DECISIONS.md && git commit -m "settle the datastore"
 ```
 
-That writes `<repo>/.glide/decisions.md`, so git carries it.
+That writes `<repo>/DECISIONS.md`, so git carries it.
 One person rules something out, commits, and every teammate's agent knows at their next pull.
 There is no server, no account and nothing to sync, because the team already has a thing that distributes files to everyone working on the repo, and this is a file.
 It is also why it costs the same whether there are two of you or two hundred.
@@ -113,6 +128,10 @@ Outside a repository `--team` is an error, while reading degrades quietly to you
 
 The file is append-only prose, so two people adding a decision on two branches conflict at the last line and the resolution is to keep both.
 That is the whole merge story and it does not need tooling.
+
+The file is deliberately not named after this tool, and the format is [written down](SPEC.md) so other tools can read and write it.
+The parser is about thirty lines.
+If you implement it somewhere else, open an issue and it gets listed in the spec: a format with one implementation is a file format, and the version worth anyone's time is the one with three.
 
 ### Work that outlives today
 
