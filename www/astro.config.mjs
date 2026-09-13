@@ -35,6 +35,7 @@ export default defineConfig({
 					label: 'How-to guides',
 					items: [
 						{ label: 'Put the line in your status bar', slug: 'how-to/status-bar' },
+						{ label: 'Settle something for the team', slug: 'how-to/team-decisions' },
 						{ label: 'Wire Claude Code', slug: 'how-to/claude-code' },
 						{ label: 'Wire Warp', slug: 'how-to/warp' },
 						{ label: 'Wire other agents', slug: 'how-to/other-agents' },
@@ -49,6 +50,7 @@ export default defineConfig({
 					items: [
 						{ label: 'CLI', slug: 'reference/cli' },
 						{ label: 'Focus verbs', slug: 'reference/focus' },
+						{ label: 'Decision verbs', slug: 'reference/decisions' },
 						{ label: 'The daily note', slug: 'reference/daily-note' },
 						{ label: 'Config', slug: 'reference/config' },
 						{ label: 'Console', slug: 'reference/console' },
@@ -60,10 +62,11 @@ export default defineConfig({
 					label: 'Explanation',
 					items: [
 						{ label: 'How agents fit', slug: 'explanation/agents' },
+						{ label: 'Decisions, and why they are not memory', slug: 'explanation/decisions' },
 						{ label: 'Why a hook, not a tool schema', slug: 'explanation/why-a-hook' },
 						{ label: 'Why plain files', slug: 'explanation/plain-files' },
 						{ label: 'What glide never does', slug: 'explanation/what-it-never-does' },
-						{ label: 'The Teams tier', slug: 'explanation/teams' },
+						{ label: 'What a team gets', slug: 'explanation/teams' },
 					],
 				},
 			],

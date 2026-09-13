@@ -1,6 +1,6 @@
 ---
 title: Focus
-description: The six verbs and what each one changes in today's note.
+description: The verbs and what each one changes in today's note.
 ---
 
 `glide focus` is the whole day-to-day surface.
@@ -32,6 +32,10 @@ Parts that would read zero are left out, so a fresh day shows only `▶ no focus
 
 Matching is forgiving on purpose: `glide focus done portal` finds `ship portal tests`.
 When nothing matches, `done` says so and changes nothing.
+
+The four write verbs refuse text that is empty or only whitespace.
+`set`, `done`, `capture`, and `log` each exit `1`, name the verb that needs words, and show the shape of the command, leaving the note alone.
+It matters most for `done`, where an empty string matches every bullet and would otherwise check off whichever one came first, and for `log`, which would otherwise append a bare timestamp.
 
 ## Writing rules
 

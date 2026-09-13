@@ -28,6 +28,8 @@ glide focus set ship the portal tests
 ```
 
 ```
+✓ now ship the portal tests
+▶ ship the portal tests · focus 0/1
 ✓ now write the roadmap
 ▶ write the roadmap · focus 0/2
 ✓ now ship the portal tests
@@ -95,7 +97,38 @@ glide focus done portal
 The tag came off, the box got checked, and the strip counts it.
 Set the next one and keep going.
 
+## 6. Rule something out
+
+The agent proposes moving the portal tests to Playwright, and you decide against it.
+Say so:
+
+```sh
+glide decide --against switching the portal tests to playwright
+```
+
+```
+ruled out: switching the portal tests to playwright
+~/notes/Decisions.md
+```
+
+The hook runs `glide prime` at the start of every session.
+Run it yourself to see what the next one gets handed:
+
+```sh
+glide prime
+```
+
+```
+Already settled, do not propose otherwise without saying why:
+- ruled out: switching the portal tests to playwright
+```
+
+That block sits in the middle of the priming text, so tomorrow's session starts with the line already in its context.
+Add `--team` and it goes to `DECISIONS.md` in the repo instead, where git carries it to everyone who works there.
+The argument for writing down the half you rejected is at [tryglide.net/decisions](https://tryglide.net/decisions.html).
+
 ## What you have at the end of the day
 
-One Markdown file, in your own folder, with what you meant to do, what happened, and what came up, in order, with times.
+One Markdown file for the day, in your own folder, with what you meant to do, what happened, and what came up, in order, with times.
+At the root of your notes folder, `Decisions.md`, a running list of what you settled and what you ruled out.
 Friday reads it back.

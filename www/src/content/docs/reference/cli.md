@@ -31,6 +31,35 @@ glide [OPTIONS] [COMMAND]
 | `glide focus capture <text>` | Append to Notes |
 | `glide focus log <text>` | Append a timestamped line to Record |
 | `glide focus today` | Print the whole note |
+| `glide focus list` | The Focus list with the current one marked, same as `glide show` |
+| `glide focus clear [--confirm]` | Remove today's unfinished items; reports what it would take without `--confirm` |
+
+The four write verbs (`set`, `done`, `capture`, `log`) refuse empty text rather than writing something blank; see [Focus](/docs/reference/focus/).
+
+## Sprints
+
+| Command | What it does |
+| --- | --- |
+| `glide sprint` | The active sprint and what is left in it |
+| `glide sprint start <name>` | Begin a sprint; any sprint already active is closed first |
+| `glide sprint add <text>` | Add an item to the active sprint |
+| `glide sprint pull <text>` | Take an item from the sprint and make it today's focus |
+| `glide sprint done <text>` | Check an item off in the sprint |
+| `glide sprint clear [--confirm]` | Remove the sprint's unfinished items; reports without `--confirm` |
+| `glide sprint end` | Close the active sprint, leaving the note behind |
+| `glide sprint list` | Every sprint, active first |
+
+## Decisions
+
+| Command | What it does |
+| --- | --- |
+| `glide decide <text>` | Record something settled, in your vault's `Decisions.md` |
+| `glide decide --against <text>` | Record something ruled out instead |
+| `glide decide --team <text>` | Write the repo's `DECISIONS.md` so git carries it to the team |
+| `glide decisions` | Everything settled, the team's first and then your own |
+
+`--against` and `--team` combine.
+Where the two files live, and what `glide prime` injects: [Decisions](/docs/reference/decisions/).
 
 ## Agents
 
@@ -66,4 +95,4 @@ glide [OPTIONS] [COMMAND]
 
 ## Exit codes
 
-`0` ok, `1` general error, `2` usage, `3` config, `4` graph not initialized.
+`0` ok, `1` general error, `2` usage or config, `3` graph not initialized, `4` LLM error.

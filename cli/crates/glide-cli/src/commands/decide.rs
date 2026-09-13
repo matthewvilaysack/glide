@@ -36,7 +36,7 @@ pub fn run(globals: &GlobalArgs, args: DecideArgs) -> Result<()> {
             )
         })?;
         let d = decide::add_team(&root, &text, args.against, Vault::today())?;
-        (d, decide::team_path(&root))
+        (d, decide::team_path_for_read(&root))
     } else {
         let root = vault_root()?;
         let _ = open_vault()?;

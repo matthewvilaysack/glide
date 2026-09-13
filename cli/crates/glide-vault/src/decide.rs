@@ -365,6 +365,23 @@ mod tests {
     }
 
     #[test]
+    fn the_path_reported_is_the_one_actually_written() {
+        let dir = tempfile::tempdir().unwrap();
+        let alt = dir.path().join(TEAM_FILE_ALT);
+        std::fs::create_dir_all(alt.parent().unwrap()).unwrap();
+        std::fs::write(&alt, "").unwrap();
+        add_team(
+            dir.path(),
+            "Postgres",
+            false,
+            chrono::NaiveDate::from_ymd_opt(2026, 1, 1).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(team_path_for_read(dir.path()), alt);
+        assert!(!dir.path().join(TEAM_FILE).exists());
+    }
+
+    #[test]
     fn a_repo_with_neither_file_gets_the_discoverable_one() {
         let dir = tempfile::tempdir().unwrap();
         add_team(

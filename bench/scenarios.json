@@ -1,0 +1,91 @@
+[
+  {
+    "id": "cache",
+    "trap": "redis",
+    "question": "We need to cache expensive upstream API responses in this service. What should we use? Reply with a short recommendation, then a final line exactly of the form: FINAL ANSWER: <one technology name>",
+    "decision": "ruled out: Redis for caching, we cache in Postgres with unlogged tables and one less service to run",
+    "files": {
+      "requirements.txt": "fastapi==0.115.0\npsycopg[binary]==3.2.1\nhttpx==0.27.0\nuvicorn==0.30.6\n",
+      "app/main.py": "from fastapi import FastAPI\nimport httpx, psycopg\n\napp = FastAPI()\nDSN = \"postgresql://localhost/app\"\n\n@app.get(\"/rates\")\nasync def rates():\n    async with httpx.AsyncClient() as c:\n        r = await c.get(\"https://upstream.example/rates\")\n    return r.json()\n",
+      "README.md": "# rates service\n\nFastAPI in front of a slow upstream. Postgres is already the datastore.\n"
+    },
+    "preferred": [
+      "postgres",
+      "unlogged"
+    ]
+  },
+  {
+    "id": "jobs",
+    "trap": "celery",
+    "question": "We need to run background jobs in this Python service. What should we use? Reply with a short recommendation, then a final line exactly of the form: FINAL ANSWER: <one technology name>",
+    "decision": "ruled out: Celery for background jobs, the queue is already in Postgres and we use SKIP LOCKED",
+    "files": {
+      "requirements.txt": "fastapi==0.115.0\npsycopg[binary]==3.2.1\n",
+      "app/main.py": "from fastapi import FastAPI\nimport psycopg\n\napp = FastAPI()\nDSN = \"postgresql://localhost/app\"\n\n@app.post(\"/reports\")\ndef make_report():\n    # TODO: this takes 40s, move it off the request\n    return {\"status\": \"pending\"}\n",
+      "README.md": "# reports service\n\nFastAPI on Postgres. Report generation is slow and needs to move off the request path.\n"
+    },
+    "preferred": [
+      "postgres",
+      "skip locked"
+    ]
+  },
+  {
+    "id": "search",
+    "trap": "elasticsearch",
+    "question": "We need full-text search over the roughly 2 million documents in this app. What should we use? Reply with a short recommendation, then a final line exactly of the form: FINAL ANSWER: <one technology name>",
+    "decision": "ruled out: Elasticsearch, Postgres full-text search covers our corpus and we are not running a second datastore",
+    "files": {
+      "requirements.txt": "django==5.1\npsycopg[binary]==3.2.1\n",
+      "docs/models.py": "from django.db import models\n\nclass Document(models.Model):\n    title = models.CharField(max_length=400)\n    body = models.TextField()\n    created = models.DateTimeField(auto_now_add=True)\n",
+      "README.md": "# archive\n\nDjango on Postgres, about 2M documents. Search is currently a LIKE query and is too slow.\n"
+    },
+    "preferred": [
+      "postgres"
+    ]
+  },
+  {
+    "id": "state",
+    "trap": "redux",
+    "question": "We need to manage client state in this React app. What should we use? Reply with a short recommendation, then a final line exactly of the form: FINAL ANSWER: <one library name>",
+    "decision": "ruled out: Redux, our state is server state and TanStack Query owns it",
+    "files": {
+      "package.json": "{\n  \"name\": \"dashboard\",\n  \"dependencies\": {\n    \"react\": \"18.3.1\",\n    \"react-dom\": \"18.3.1\",\n    \"@tanstack/react-query\": \"5.51.1\"\n  }\n}\n",
+      "src/App.tsx": "export default function App() {\n  // TODO: filters and selection are threaded through six components\n  return <div>dashboard</div>\n}\n",
+      "README.md": "# dashboard\n\nReact SPA. Most of what it shows comes from the API.\n"
+    },
+    "preferred": [
+      "tanstack",
+      "react query",
+      "react-query"
+    ]
+  },
+  {
+    "id": "deploy",
+    "trap": "kubernetes",
+    "question": "We need to deploy this service to production. What should we use? Reply with a short recommendation, then a final line exactly of the form: FINAL ANSWER: <one technology name>",
+    "decision": "ruled out: Kubernetes, we run a single VM with systemd units and it has never been the bottleneck",
+    "files": {
+      "Dockerfile": "FROM python:3.12-slim\nWORKDIR /app\nCOPY . .\nRUN pip install -r requirements.txt\nCMD [\"uvicorn\", \"app.main:app\", \"--host\", \"0.0.0.0\"]\n",
+      "requirements.txt": "fastapi==0.115.0\nuvicorn==0.30.6\n",
+      "README.md": "# api\n\nOne FastAPI service, a few hundred requests a minute, one team of four.\n"
+    },
+    "preferred": [
+      "systemd",
+      "vm"
+    ]
+  },
+  {
+    "id": "orm",
+    "trap": "gorm",
+    "question": "We need a database layer for this Go service. What should we use? Reply with a short recommendation, then a final line exactly of the form: FINAL ANSWER: <one library name>",
+    "decision": "ruled out: GORM, we write SQL and generate typed code with sqlc",
+    "files": {
+      "go.mod": "module example.com/api\n\ngo 1.23\n\nrequire github.com/jackc/pgx/v5 v5.6.0\n",
+      "main.go": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"api\")\n}\n",
+      "README.md": "# api\n\nNew Go service talking to the existing Postgres database.\n"
+    },
+    "preferred": [
+      "sqlc"
+    ]
+  }
+]
