@@ -89,6 +89,14 @@ That fallback looks like dead code and is not: it is the promise that a repo whi
 It refuses to run off `main`, with a dirty tree, behind `origin/main`, or onto a tag that already exists, so a release starts with a clean checkout and not with an argument.
 Patches to a shipped line go through `scripts/patch.sh`, and the runbook for both is `docs/releasing.md`.
 
+## The docs site does not deploy itself
+
+`www/` is a separate Vercel project (`glide-docs`) that is not wired to this repository, so pushing a docs change ships nothing.
+Deploy it by hand from `www/` with `npx vercel deploy --prod --yes`, and check the page is actually live at `tryglide.net/docs/...` rather than trusting the push.
+Everything under `tryglide.net/docs` is served through a rewrite in the site repo, so a 404 there usually means this step was skipped.
+
 @DECISIONS.md
 
 That import is the project's own decisions file, carrying what has already been settled here so a session starts knowing it, which is also this repo dogfooding the format it specifies.
+It reaches the session you are in and, as measured on 2026-09-12, it does not reach subagents: a subagent spawned in a repo with this import answered "unknown" to a fact that existed only in the imported file.
+So work delegated to a subagent does not inherit these decisions, and anything a subagent needs to honour has to be put in its prompt.

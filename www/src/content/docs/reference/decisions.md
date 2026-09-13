@@ -53,3 +53,11 @@ Both files are plain Markdown you can read, edit, or delete by hand.
 The grammar is normative and lives under CC0 in [SPEC.md](https://github.com/matthewvilaysack/glide/blob/main/SPEC.md).
 Lines that do not match it are ignored rather than treated as an error, so headings and prose above the list are safe.
 Glide is one implementation of that format, not its owner.
+
+## What is worth recording
+
+A measured finding rather than advice: in [the experiment](https://github.com/matthewvilaysack/glide/tree/main/bench), three of six decisions changed nothing, because the repository already implied the answer.
+Asked what to cache with inside a service that already has Postgres in its requirements file, an agent recommends Postgres whether or not you tell it.
+
+So the decisions worth the twenty tokens are the ones the code cannot imply.
+Where to deploy, which of two equally good libraries this team standardised on, what was tried before and abandoned: none of that is visible in a checkout, and those are the cases where injecting the decision moved the answer from never to every time.
