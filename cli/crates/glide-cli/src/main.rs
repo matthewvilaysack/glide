@@ -10,8 +10,74 @@ mod output;
 
 use cli::{Cli, Command};
 
+/// Verbs that live under a parent command, and the parent they belong to.
+///
+/// People type the verb they mean, not the path to it. `glide log` is what a hand
+/// reaches for even though the command is `glide focus log`, and clap's nearest
+/// match does not look inside subcommands, so it answered `glide log` with "a
+/// similar subcommand exists: 'init'". A wrong suggestion is worse than none,
+/// because the next thing the reader does is run it.
+const NESTED_VERBS: &[(&str, &str)] = &[
+    ("log", "focus"),
+    ("set", "focus"),
+    ("done", "focus"),
+    ("capture", "focus"),
+    ("list", "focus"),
+    ("clear", "focus"),
+    ("add", "focus"),
+    ("start", "sprint"),
+    ("pull", "sprint"),
+    ("end", "sprint"),
+];
+
+/// What someone meant by a word that is not a top-level command.
+///
+/// `add` is the special case worth spelling out: there is no `focus add`, the verb
+/// is `capture`, and being told to run a second command that also does not exist
+/// is the same dead end twice.
+fn nested_hint(word: &str) -> Option<String> {
+    if word == "add" {
+        return Some(
+            "`add` is not a verb here. To put something in today's list, use `glide focus capture <text>`."
+                .to_string(),
+        );
+    }
+    NESTED_VERBS
+        .iter()
+        .find(|(v, _)| *v == word)
+        .map(|(v, parent)| format!("did you mean `glide {parent} {v}`?"))
+}
+
 fn main() -> ProcessExitCode {
-    let cli = Cli::parse();
+    let cli = match Cli::try_parse() {
+        Ok(c) => c,
+        Err(e) => {
+            // Only improve the "no such command" case; every other clap error is
+            // already precise and clap prints it better than this could.
+            if e.kind() == clap::error::ErrorKind::InvalidSubcommand {
+                let args: Vec<String> = std::env::args().skip(1).take(2).collect();
+                // `glide add` and `glide focus add` are the same mistake in two
+                // positions, so both get the same answer.
+                let bad = match args.as_slice() {
+                    [parent, verb] if NESTED_VERBS.iter().any(|(_, p)| p == parent) => verb.clone(),
+                    [word, ..] => word.clone(),
+                    [] => String::new(),
+                };
+                if let Some(hint) = nested_hint(&bad) {
+                    println!("error: `{bad}` is not a glide verb");
+                    println!("help: {hint}");
+                    return ProcessExitCode::from(ExitCode::Config as u8);
+                }
+            }
+            e.print().ok();
+            return ProcessExitCode::from(match e.kind() {
+                clap::error::ErrorKind::DisplayHelp | clap::error::ErrorKind::DisplayVersion => {
+                    ExitCode::Ok
+                }
+                _ => ExitCode::Config,
+            } as u8);
+        }
+    };
     init_tracing(cli.debug);
 
     let result = dispatch(cli);
@@ -105,4 +171,52 @@ fn init_tracing(debug: bool) {
         .with_target(false)
         .with_writer(std::io::stderr)
         .try_init();
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_verb_that_lives_under_focus_points_at_focus() {
+        assert_eq!(
+            nested_hint("log").unwrap(),
+            "did you mean `glide focus log`?"
+        );
+        assert_eq!(
+            nested_hint("capture").unwrap(),
+            "did you mean `glide focus capture`?"
+        );
+    }
+
+    #[test]
+    fn a_verb_that_lives_under_sprint_points_at_sprint() {
+        assert_eq!(
+            nested_hint("pull").unwrap(),
+            "did you mean `glide sprint pull`?"
+        );
+    }
+
+    #[test]
+    fn add_is_told_the_real_verb_rather_than_a_command_that_also_does_not_exist() {
+        let h = nested_hint("add").unwrap();
+        assert!(h.contains("glide focus capture"), "{h}");
+        assert!(!h.contains("focus add"), "{h}");
+    }
+
+    #[test]
+    fn a_word_that_is_not_a_verb_gets_no_invented_suggestion() {
+        assert!(nested_hint("spirnt").is_none());
+        assert!(nested_hint("xyzzy").is_none());
+    }
+
+    #[test]
+    fn every_nested_verb_names_a_real_parent() {
+        for (_, parent) in NESTED_VERBS {
+            assert!(
+                matches!(*parent, "focus" | "sprint"),
+                "{parent} is not a command"
+            );
+        }
+    }
 }
