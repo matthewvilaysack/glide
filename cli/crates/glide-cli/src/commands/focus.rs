@@ -1,9 +1,23 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use glide_vault::Vault;
 
 use crate::cli::{ClearArgs, FocusCmd, FocusSub, GlobalArgs};
 use crate::commands::open_vault;
 use crate::output::{dim, ok, print_json, use_color, wants_json};
+
+/// The words a write verb was given, refused when there are none.
+///
+/// An empty argument used to succeed and write a timestamp with nothing after it,
+/// and `done` was worse than that: empty text matches every bullet, so it checked
+/// off whichever happened to be first. An agent that calls one of these with a
+/// variable that came back empty should be told, not quietly obeyed.
+fn words(text: &[String], verb: &str, example: &str) -> Result<String> {
+    let t = text.join(" ").trim().to_string();
+    if t.is_empty() {
+        return Err(anyhow!("`glide focus {verb}` needs words: {example}"));
+    }
+    Ok(t)
+}
 
 pub fn run(globals: &GlobalArgs, cmd: FocusCmd) -> Result<()> {
     let vault = open_vault()?;
@@ -22,19 +36,25 @@ pub fn run(globals: &GlobalArgs, cmd: FocusCmd) -> Result<()> {
         }
         FocusSub::Today => print!("{}", note.raw),
         FocusSub::Set { text } => {
-            let chosen = note.set_now(&text.join(" "));
+            let t = words(&text, "set", "`glide focus set ship the portal tests`")?;
+            let chosen = note.set_now(&t);
             write_guard(globals)?;
             note.save()?;
             report(globals, color, "now", &chosen, &note.snapshot())?;
         }
         FocusSub::Done { text } => {
-            let done = note.mark_done(&text.join(" "))?;
+            let t = words(&text, "done", "`glide focus done portal`")?;
+            let done = note.mark_done(&t)?;
             write_guard(globals)?;
             note.save()?;
             report(globals, color, "done", &done, &note.snapshot())?;
         }
         FocusSub::Capture { text } => {
-            let t = text.join(" ");
+            let t = words(
+                &text,
+                "capture",
+                "`glide focus capture ask about the cache revert`",
+            )?;
             note.capture(&t);
             write_guard(globals)?;
             note.save()?;
@@ -43,7 +63,7 @@ pub fn run(globals: &GlobalArgs, cmd: FocusCmd) -> Result<()> {
         FocusSub::List => return show_list(globals),
         FocusSub::Clear(args) => return clear(globals, note, args, color),
         FocusSub::Log { text } => {
-            let t = text.join(" ");
+            let t = words(&text, "log", "`glide focus log fixed the flaky build`")?;
             note.log(&t);
             write_guard(globals)?;
             note.save()?;
@@ -150,4 +170,38 @@ fn report(
         println!("{}", dim(&snap.line(), color));
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_write_verb_with_no_words_is_refused() {
+        for (verb, args) in [
+            ("log", vec![]),
+            ("set", vec![String::new()]),
+            ("done", vec!["   ".to_string()]),
+            ("capture", vec![String::new(), "  ".to_string()]),
+        ] {
+            let e = words(&args, verb, "`example`").unwrap_err().to_string();
+            assert!(e.contains(verb), "{verb}: {e}");
+            assert!(e.contains("example"), "{verb} must show how: {e}");
+        }
+    }
+
+    #[test]
+    fn real_words_survive_and_are_trimmed() {
+        let t = words(
+            &[
+                "  ship".to_string(),
+                "the".to_string(),
+                "tests  ".to_string(),
+            ],
+            "set",
+            "`x`",
+        )
+        .unwrap();
+        assert_eq!(t, "ship the tests");
+    }
 }
