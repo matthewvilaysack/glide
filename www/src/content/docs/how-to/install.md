@@ -14,6 +14,7 @@ brew upgrade matthewvilaysack/glide/glide
 ```
 
 The tap is updated by the release workflow the moment a version is published.
+Newer Homebrew refuses third-party taps until you trust them; if it says so, run `brew trust matthewvilaysack/glide` once and install again.
 
 ## One line
 

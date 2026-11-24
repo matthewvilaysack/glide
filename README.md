@@ -39,6 +39,8 @@ The recording is scripted (`demo/glide.tape`, rendered with [VHS](https://github
 brew install matthewvilaysack/glide/glide
 ```
 
+If Homebrew refuses it as an untrusted tap, run `brew trust matthewvilaysack/glide` once and install again.
+
 or
 
 ```sh
