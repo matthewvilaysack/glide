@@ -181,6 +181,21 @@ Glide keeps that in a Markdown daily note the person already owns (an Obsidian v
 - `--safe` refuses every vault write and says why. An unset vault path says how to set it.
 - No daemon, no network, no lock file: every operation reads the note fresh and writes it back whole.
 
+## R011: Reach the vault from any AI app
+
+**Status:** built, not yet released (waiting on a real end-to-end run from claude.ai)
+
+People ask their AI apps about their own notes on the web and on the phone, not only in the terminal.
+`glide mcp up` serves the vault as a remote MCP server from the machine it lives on, behind GitHub sign-in, through Tailscale Funnel.
+
+### Acceptance criteria
+
+- `glide mcp serve --http` binds loopback only and refuses anything else; Funnel is the only way in from outside.
+- Every `/mcp` request without a live token gets 401 with the resource metadata URL, and no vault content.
+- Only GitHub logins on `[mcp.http] allow` get a token; PKCE (S256) is required, codes and refresh tokens work once, tokens are stored only as hashes.
+- Remote clients can search, list, read and follow backlinks across the vault, and capture or set focus in today's note; nothing can edit any other note, and `log` is not offered.
+- Hidden folders and `[mcp.http] exclude` folders are invisible to every tool; a refused path reads as not found.
+
 ## Demo traceability
 
 | Requirement | Show it with |
@@ -195,6 +210,7 @@ Glide keeps that in a Markdown daily note the person already owns (an Obsidian v
 | R008 | `docs/scoping-questionnaire.md` |
 | R009 | `docs/console-prd.md` and the console section of `cli/README.md` |
 | R010 | `docs/vault-contract.md`, `docs/attach-terminals.md`, `glide focus` against a temp vault |
+| R011 | `docs/hosted-vault-mcp.md`, the `mcp_notes`, `mcp_auth` and `mcp_http` tests |
 
 ## Phase 0 exit bar
 

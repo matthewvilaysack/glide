@@ -17,9 +17,49 @@ pub struct Config {
     pub output: OutputConfig,
     pub permissions: PermissionsConfig,
     pub vault: VaultConfig,
+    pub mcp: McpConfig,
 }
 
 /// Where the user's daily notes live. Empty `path` means "not set up".
+/// `glide mcp` settings. Only the HTTP mode needs any.
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[serde(default)]
+pub struct McpConfig {
+    pub http: McpHttpConfig,
+}
+
+/// The remote MCP server: what it binds to, who may sign in, and what stays hidden.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
+pub struct McpHttpConfig {
+    /// Loopback address the server binds to. The tunnel is the only way in from outside.
+    pub addr: String,
+    /// Public HTTPS origin clients reach, e.g. `https://laptop.tailnet.ts.net`. Filled by `glide mcp up` when empty.
+    pub public_url: String,
+    /// GitHub logins allowed to sign in. Empty means nobody can.
+    pub allow: Vec<String>,
+    /// Vault folders no tool can see, relative to the vault root.
+    pub exclude: Vec<String>,
+    /// Client id of the GitHub OAuth App. The secret lives in the macOS Keychain.
+    pub github_client_id: String,
+}
+
+impl Default for McpHttpConfig {
+    fn default() -> Self {
+        Self {
+            addr: "127.0.0.1:8787".into(),
+            public_url: String::new(),
+            allow: Vec::new(),
+            exclude: vec![
+                "Personal".into(),
+                "Finance".into(),
+                "Health & Fitness".into(),
+            ],
+            github_client_id: String::new(),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
 pub struct VaultConfig {

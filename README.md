@@ -163,6 +163,8 @@ Glide reads and edits exactly four `##` sections of today's note: Focus, Tasks, 
 Everything else in the file survives byte for byte, and a missing note is created with just those sections.
 No daemon, no account, no server, no lock file.
 Nothing leaves your machine; the folder sync you already have is the cloud.
+The one exception is opt-in: `glide mcp up` serves your vault to AI apps like claude.ai, ChatGPT and Cursor from your own machine, behind GitHub sign-in, through Tailscale Funnel ([how](https://tryglide.net/docs/how-to/remote/)).
+It runs only while you leave it running. The vault is never copied anywhere; an app gets only the notes it asks for, one request at a time, and those go to that app's AI provider.
 `--safe` turns every write into a refusal that says so.
 The contract is one page: [`docs/vault-contract.md`](docs/vault-contract.md).
 

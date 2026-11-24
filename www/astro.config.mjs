@@ -40,6 +40,7 @@ export default defineConfig({
 						{ label: 'Wire Warp', slug: 'how-to/warp' },
 						{ label: 'Wire other agents', slug: 'how-to/other-agents' },
 						{ label: 'Use the MCP server', slug: 'how-to/mcp' },
+						{ label: 'Use your vault from any AI app', slug: 'how-to/remote' },
 						{ label: 'Verify a download', slug: 'how-to/verify-download' },
 						{ label: 'Patch a shipped release', slug: 'how-to/patch-release' },
 						{ label: 'Troubleshooting', slug: 'how-to/troubleshooting' },

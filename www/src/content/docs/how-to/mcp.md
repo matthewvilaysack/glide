@@ -1,6 +1,6 @@
 ---
 title: MCP server
-description: The six verbs as tools over stdio.
+description: The focus verbs and vault search as tools over stdio.
 ---
 
 ```sh
@@ -20,6 +20,13 @@ No daemon, no network: the client starts it and owns it.
 | `focus_done` | `text` | Same as `glide focus done` |
 | `capture` | `text` | Same as `glide focus capture` |
 | `log` | `text` | Same as `glide focus log` |
+| `search_notes` | `query`, `folder`? | Find a phrase across the vault |
+| `read_note` | `path` | One note's Markdown |
+| `list_notes` | `folder`? | Notes, newest first |
+| `backlinks` | `path` | Notes that link to this one |
+
+The vault tools skip hidden folders and anything under `[mcp.http] exclude`.
+To reach the same tools from claude.ai, ChatGPT or Cursor, see [Use your vault from any AI app](/docs/how-to/remote/).
 
 The server's instructions tell the agent to call `today` at the start of a session, `focus_set` when the person says what they are on, `focus_done` when something finishes, and `log` after every task.
 

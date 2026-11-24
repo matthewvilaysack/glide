@@ -17,9 +17,17 @@ description: What glide reads, writes, and never touches.
 
 ## Never
 
-- Nothing leaves your machine. There is no telemetry, no account, no server.
+- Nothing leaves your machine. There is no telemetry, no account, no server, unless you run `glide mcp up`.
 - No network calls at all in the focus features. The Teams tier's optional LLM provider is off by default.
 - `--safe` makes every write a refusal.
+
+## When you run `glide mcp up`
+
+- Glide listens on 127.0.0.1 and Tailscale Funnel forwards public HTTPS to it. It stops when you stop it.
+- An app gets in only after GitHub sign-in as a login on `[mcp.http] allow`. GitHub tells glide your login and nothing else.
+- Apps read notes one request at a time, and a note an app reads goes to that app's AI provider. The vault is never copied or uploaded, and hidden folders and `[mcp.http] exclude` are invisible.
+- Glide keeps hashed tokens in `~/.glide/mcp-auth.db` and one line per request (time, login, tool) in `~/.glide/mcp-access.log`.
+- The GitHub OAuth App secret stays in the macOS Keychain.
 
 ## Questions
 

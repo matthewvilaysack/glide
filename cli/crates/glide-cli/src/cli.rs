@@ -224,8 +224,18 @@ pub struct McpCmd {
 
 #[derive(Debug, Subcommand)]
 pub enum McpSub {
-    /// Serve over stdio. Point Claude Code, Warp, or any MCP client at `glide mcp serve`.
-    Serve,
+    /// Serve over stdio, or over HTTP with `--http [ADDR]` (no tunnel, sign-in still required).
+    Serve {
+        /// Serve streamable HTTP on this loopback address instead of stdio (default from `[mcp.http] addr`).
+        #[arg(long, num_args = 0..=1, value_name = "ADDR")]
+        http: Option<Option<String>>,
+    },
+    /// Put your vault online for claude.ai, ChatGPT, Cursor and other remote clients: HTTP server plus Tailscale Funnel.
+    Up,
+    /// Turn the Tailscale Funnel off.
+    Down,
+    /// Show the public URL, what is hidden, and recent requests.
+    Status,
 }
 
 #[derive(Debug, Args)]
