@@ -2,7 +2,8 @@
 
 Glide is a Rust CLI that keeps today's priorities in a Markdown note the person owns, and feeds a coding agent that context at session start through a `SessionStart` hook running `glide prime`.
 It also records what a team has already settled into a `DECISIONS.md` that git distributes, which is the part of the product the rest of this file keeps pointing back at.
-There is no daemon, no account and no server, and nothing the binary does leaves the machine.
+There is no daemon, no account and no server, and nothing the binary does leaves the machine, with one opt-in exception: `glide mcp up` serves the vault to AI apps over HTTP, behind GitHub sign-in and Tailscale Funnel, only while the person leaves it running (`docs/hosted-vault-mcp.md`).
+Its tools are read-mostly and a hidden or excluded note must read as not found; keep both properties when you touch `mcp_notes`, `mcp_auth` or `mcp_http`.
 
 ## Which docs are current
 

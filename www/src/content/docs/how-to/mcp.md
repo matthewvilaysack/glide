@@ -20,8 +20,8 @@ No daemon, no network: the client starts it and owns it.
 | `focus_done` | `text` | Same as `glide focus done` |
 | `capture` | `text` | Same as `glide focus capture` |
 | `log` | `text` | Same as `glide focus log` |
-| `search_notes` | `query`, `folder`? | Find a phrase across the vault |
-| `read_note` | `path` | One note's Markdown |
+| `search_notes` | `query`, `folder`?, `limit`? | Plain-words search, best notes first, with their best lines |
+| `read_note` | `path` | One note's Markdown, by path or by name like a `[[link]]` |
 | `list_notes` | `folder`? | Notes, newest first |
 | `backlinks` | `path` | Notes that link to this one |
 

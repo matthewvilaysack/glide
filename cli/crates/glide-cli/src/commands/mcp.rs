@@ -68,16 +68,18 @@ struct TextArg {
 
 #[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
 struct PathArg {
-    /// Vault-relative path of the note, with or without `.md`, e.g. `Projects/Glide` or `Projects/Glide.md`.
+    /// The note's vault-relative path (`Projects/Glide.md`) or just its name (`Glide`), the way an Obsidian link names it.
     path: String,
 }
 
 #[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
 struct SearchArg {
-    /// Words to look for. Matching is case-insensitive and on the exact phrase.
+    /// What to look for, in plain words. Each word is matched on its own, case-insensitively, and notes whose titles match rank first.
     query: String,
     /// Only search inside this vault folder, e.g. `Projects`.
     folder: Option<String>,
+    /// How many notes to return, 1 to 25. Defaults to 10.
+    limit: Option<usize>,
 }
 
 #[derive(Debug, serde::Deserialize, schemars::JsonSchema)]
@@ -88,7 +90,9 @@ struct FolderArg {
 
 fn notes_err(e: NotesError) -> McpError {
     match e {
-        NotesError::NotFound(_) => McpError::invalid_params(e.to_string(), None),
+        NotesError::NotFound(_) | NotesError::Ambiguous(..) => {
+            McpError::invalid_params(e.to_string(), None)
+        }
         NotesError::Io(_) => McpError::internal_error(e.to_string(), None),
     }
 }
@@ -126,16 +130,22 @@ impl VaultServer {
     }
 
     #[tool(
-        description = "Search the person's notes for a word or phrase. Returns matching note paths with line numbers and the matching line. Use folder to narrow it down."
+        description = "Search the person's notes. Ask in plain words; each word is matched separately and the best notes come first, each with its most relevant lines and line numbers. Follow up with read_note on a path to get the whole note."
     )]
     fn search_notes(
         &self,
-        Parameters(SearchArg { query, folder }): Parameters<SearchArg>,
+        Parameters(SearchArg {
+            query,
+            folder,
+            limit,
+        }): Parameters<SearchArg>,
     ) -> Result<CallToolResult, McpError> {
-        json(&self.notes.search(&query, folder.as_deref()))
+        json(&self.notes.search(&query, folder.as_deref(), limit))
     }
 
-    #[tool(description = "The full Markdown of one note, by vault-relative path.")]
+    #[tool(
+        description = "The full Markdown of one note, by vault-relative path or by name alone, like an Obsidian [[link]]."
+    )]
     fn read_note(
         &self,
         Parameters(PathArg { path }): Parameters<PathArg>,

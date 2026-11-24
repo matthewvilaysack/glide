@@ -8,3 +8,5 @@ What has been settled, so nothing settled gets proposed again.
 - 2026-09-12 ruled out: a hosted sync service; git already distributes files to everyone on the repo
 - 2026-09-12 ruled out: identifiers, status fields and supersedes links; a decision that is annoying to record does not get recorded
 - 2026-09-12 decided: publish the decision benchmark result either way, including if injecting a decision changes nothing
+- 2026-11-23 decided: `glide mcp up` may serve the vault over the network, opt-in, started and stopped by the person, never as a daemon
+- 2026-11-23 ruled out: copying or syncing the vault to a server; apps read notes one request at a time from the machine they live on

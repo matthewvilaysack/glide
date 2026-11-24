@@ -298,16 +298,41 @@ pub fn down() -> Result<()> {
     Ok(())
 }
 
+/// "on, forwarding to 127.0.0.1:8787" or "off", from `tailscale funnel status --json`.
+fn funnel_line(addr: &str) -> String {
+    let Ok(out) = Command::new("tailscale")
+        .args(["funnel", "status", "--json"])
+        .output()
+    else {
+        return "unknown (tailscale is not installed)".into();
+    };
+    let v: serde_json::Value = serde_json::from_slice(&out.stdout).unwrap_or_default();
+    let on = v["AllowFunnel"]
+        .as_object()
+        .is_some_and(|m| m.values().any(|b| b.as_bool() == Some(true)));
+    if !on {
+        return "off".into();
+    }
+    let proxies: Vec<String> = v["Web"]
+        .as_object()
+        .into_iter()
+        .flat_map(|m| m.values())
+        .filter_map(|site| site["Handlers"]["/"]["Proxy"].as_str())
+        .map(|p| p.trim_start_matches("http://").to_string())
+        .collect();
+    if proxies.iter().any(|p| p == addr) {
+        format!("on, forwarding to {addr}")
+    } else {
+        format!(
+            "on, but forwarding to {} instead of {addr}",
+            proxies.join(", ")
+        )
+    }
+}
+
 pub fn status() -> Result<()> {
     let cfg = load_config()?;
-    let funnel = Command::new("tailscale")
-        .args(["funnel", "status"])
-        .output()
-        .ok();
-    let funnel_text = funnel
-        .map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string())
-        .filter(|s| !s.is_empty())
-        .unwrap_or_else(|| "off".into());
+    let funnel = funnel_line(&cfg.addr);
     println!("server       {}", cfg.addr);
     println!(
         "public url   {}",
@@ -333,10 +358,7 @@ pub fn status() -> Result<()> {
             cfg.exclude.join(", ")
         }
     );
-    println!(
-        "funnel       {}",
-        funnel_text.lines().next().unwrap_or("off")
-    );
+    println!("funnel       {funnel}");
     let log = std::fs::read_to_string(access_log()?).unwrap_or_default();
     let recent: Vec<&str> = log.lines().rev().take(10).collect();
     println!(
