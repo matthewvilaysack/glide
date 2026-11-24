@@ -732,7 +732,7 @@ dependencies = [
 
 [[package]]
 name = "glide-cli"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "anyhow",
  "axum",
@@ -772,7 +772,7 @@ dependencies = [
 
 [[package]]
 name = "glide-common"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "anyhow",
  "chrono",
@@ -786,7 +786,7 @@ dependencies = [
 
 [[package]]
 name = "glide-core"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "anyhow",
  "chrono",
@@ -800,7 +800,7 @@ dependencies = [
 
 [[package]]
 name = "glide-graph"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "anyhow",
  "chrono",
@@ -819,7 +819,7 @@ dependencies = [
 
 [[package]]
 name = "glide-llm"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "anyhow",
  "glide-common",
@@ -831,7 +831,7 @@ dependencies = [
 
 [[package]]
 name = "glide-play"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "chrono",
  "glide-vault",
@@ -840,7 +840,7 @@ dependencies = [
 
 [[package]]
 name = "glide-tui"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "anyhow",
  "glide-common",
@@ -852,7 +852,7 @@ dependencies = [
 
 [[package]]
 name = "glide-vault"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "chrono",
  "directories",
