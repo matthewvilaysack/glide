@@ -32,12 +32,14 @@ pub const HELP: &str = concat!(
 );
 
 /// One command's result. `note` is the whole note after the command.
-#[wasm_bindgen(getter_with_clone)]
+#[wasm_bindgen]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Outcome {
     /// What the terminal shows: the CLI's stdout, or its stderr line when
     /// `exit` is non-zero.
+    #[wasm_bindgen(getter_with_clone)]
     pub stdout: String,
+    #[wasm_bindgen(getter_with_clone)]
     pub note: String,
     pub exit: i32,
 }
